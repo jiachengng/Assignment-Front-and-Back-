@@ -1,0 +1,5 @@
+# Steps - Remove node_modules in cache if any
+# git rm -r --cached node_modules
+
+# exclude node_modules
+node_modules
