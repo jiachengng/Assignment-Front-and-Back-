@@ -1,6 +1,6 @@
 const db = require("./config/database")
 
-exports.CheckGroup = (username, groupname) => {
+const CheckGroup = (username, groupname) => {
   return new Promise((resolve, reject) => {
     let sql = `SELECT * FROM usergroup WHERE username = '${username}' AND groupname = '${groupname}'`
 
@@ -8,10 +8,17 @@ exports.CheckGroup = (username, groupname) => {
       if (err) {
         reject(false)
       } else {
-        if (results[0].isactive === 1) {
-          resolve(true)
+        try {
+          if (results[0].isActive === 1) {
+            resolve(true)
+          } else {
+            resolve(false)
+          }
+        } catch (e) {
+          resolve(false)
         }
       }
     })
   })
 }
+module.exports = CheckGroup

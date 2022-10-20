@@ -17,6 +17,11 @@ apiRouter.route("/editUserGroup").post(userController.editUserGroup)
 apiRouter.route("/getUserGroupByUserName").post(groupController.getUserGroupByUserName)
 // update user profile
 apiRouter.route("/updateUserDetails").post(userController.updateUserDetails)
+// display user profile
+apiRouter.route("/displayUserDetails").get(userController.displayUserDetails)
+apiRouter.route("/displayOneUserDetails").post(userController.displayOneUserDetails)
+apiRouter.route("/displayOneUserGroup").post(userController.displayOneUserGroup)
+apiRouter.route("/authUser").post(userController.authUser)
 
 //ROUTES TO CHECK ID WITH NAME
 // apiRouter.route("/findUsernameById").post(userController.findUsernameById)

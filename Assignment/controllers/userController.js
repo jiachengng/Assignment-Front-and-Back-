@@ -2,6 +2,10 @@ const sql = require("../config/database")
 const bcrypt = require("bcryptjs")
 const e = require("express")
 const { CheckActive, AddUserGroup, SetToInactive } = require("../checkActive")
+const { JsonWebTokenError } = require("jsonwebtoken")
+const jwt = require("jsonwebtoken")
+const sendToken = require("../jwtToken")
+const CheckGroup = require("../checkGroup")
 
 // Create and Save a new User in db
 exports.createUser = async (req, res, result) => {
@@ -71,7 +75,7 @@ exports.logIn = (req, res) => {
       message: "Content can not be empty!"
     })
   }
-  sql.query(`SELECT * FROM user WHERE username = '${req.body.username}' `, async (err, result) => {
+  sql.query(`SELECT * FROM user WHERE username = '${req.body.username}' AND isactive = true `, async (err, result) => {
     if (err) {
       console.log("error: ", err)
       res.send("Unable to get results")
@@ -83,16 +87,20 @@ exports.logIn = (req, res) => {
         console.log("Password of account is: " + trueornot)
         if (trueornot) {
           console.log("Logged in")
+          sendToken(req.body.username, 200, res)
+          // const token = this.getJwtToken(req.body.username)
+
+          // res.status(200).send({
+          //   success: true,
+          //   results: result.length,
+          //   // requestMethod: req.requestMethod,
+          //   data: result,
+          //   token: token
+          // })
         }
       } else {
         console.log("account cannot be found")
       }
-      res.status(200).send({
-        success: true,
-        results: result.length,
-        // requestMethod: req.requestMethod,
-        data: result
-      })
     }
   })
 }
@@ -147,6 +155,12 @@ exports.editUserGroup = async (req, res) => {
       var testarr1 = [].concat(arr1)
       var testarr2 = [].concat(arr2)
 
+      if (testarr1.length === 0) {
+        for (var group2 of testarr2) {
+          await AddUserGroup(req.body.username, group2)
+        }
+      }
+
       //const go = async () => {
       for (var group2 of testarr2) {
         for (var group1 of testarr1) {
@@ -163,9 +177,10 @@ exports.editUserGroup = async (req, res) => {
                   console.log("Array2 removing: " + group2)
                   removeA(arr1, group2)
                   removeA(arr2, group2)
-                } else {
-                  console.log("return")
                 }
+                // else {
+                //   console.log("return")
+                // }
               })
               .catch(
                 reject => {}
@@ -231,8 +246,9 @@ exports.updateUserDetails = async (req, res) => {
       res.send("Unable to get results")
       return
     } else {
-      if (result.length === 1) {
-        console.log("User details updated: ", result[0])
+      console.log(result)
+      if (result.changedRows === 1) {
+        console.log("User details updated. ")
       } else {
         console.log("Error")
       }
@@ -242,6 +258,153 @@ exports.updateUserDetails = async (req, res) => {
         // requestMethod: req.requestMethod,
         data: result
       })
+    }
+  })
+}
+//=========================================================
+exports.getJwtToken = function (username) {
+  return jwt.sign({ id: username }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_TIME })
+}
+//==========================================================
+exports.displayUserDetails = async (req, res) => {
+  // Validate request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    })
+  }
+  // sql.query(`SELECT * FROM user`, async (err, result) => {
+  sql.query(
+    `SELECT u.username, u.email, u.password, GROUP_CONCAT(ug.groupname ORDER BY ug.groupname ASC SEPARATOR ', ') as 'groups'
+  FROM user AS u
+  LEFT JOIN usergroup AS ug ON ug.username = u.username AND ug.isactive = 1
+  GROUP BY u.username`,
+    async (err, result) => {
+      if (err) {
+        console.log("error: ", err)
+        res.send("Unable to get results")
+        return
+      } else {
+        // if (result.length === 1) {
+        //   console.log("User details: ", result[0])
+        // } else {
+        //   console.log("Error")
+        // }
+        res.send(result)
+      }
+    }
+  )
+}
+//==========================================================
+exports.authUser = async (req, res) => {
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    })
+  }
+  console.log("Res.body.username: " + req.body.username)
+  var isAdmin = false
+  var testing = await CheckGroup(req.body.username, "admin")
+    .then(resolve => {
+      if (resolve) {
+        console.log("RETURN TRUE")
+        return true
+      } else {
+        console.log("RETURN FALSE")
+        return false
+      }
+    })
+    .catch(
+      reject => {}
+      // console.log("Runing check if active")
+      //})
+    )
+
+  isAdmin = testing
+  console.log("IsAdmin: " + isAdmin)
+
+  var token = req.body.token
+
+  if (token) {
+    try {
+      console.log("Token: " + token)
+      const decode = jwt.verify(token, process.env.JWT_SECRET)
+      console.log("decode = ")
+      console.log(decode.id)
+      if (req.body.username === decode.id) {
+        console.log("IS ADMIN: " + isAdmin)
+        console.log("USERNAME: " + decode.id)
+        res.status(200).send({
+          login: true,
+          isAdmin: isAdmin,
+          username: decode.id
+        })
+      } else {
+        res.status(200).send({
+          login: false,
+          isAdmin: isAdmin,
+          username: decode.id
+        })
+      }
+    } catch (e) {
+      console.log(e)
+      res.status(200).send({
+        login: false,
+        isAdmin: isAdmin
+      })
+    }
+  } else {
+    res.status(200).send({
+      login: false,
+      isAdmin: isAdmin
+    })
+  }
+}
+//------------------------------------------------------------------------
+exports.displayOneUserDetails = async (req, res) => {
+  // Validate request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    })
+  }
+  sql.query(`SELECT * FROM user WHERE username= '${req.body.username}'`, async (err, result) => {
+    console.log("req.body.username = " + req.body.username)
+    if (err) {
+      console.log("error: ", err)
+      res.send("Unable to get results")
+      return
+    } else {
+      // if (result.length === 1) {
+      //   console.log("User details: ", result[0])
+      // } else {
+      //   console.log("Error")
+      // }
+      res.send(result)
+    }
+  })
+}
+//===============================================================================
+exports.displayOneUserGroup = async (req, res) => {
+  // Validate request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    })
+  }
+  sql.query(`SELECT groupname FROM usergroup WHERE username= '${req.body.username}'`, async (err, result) => {
+    console.log("req.body.username = " + req.body.username)
+    if (err) {
+      console.log("error: ", err)
+      res.send("Unable to get results")
+      return
+    } else {
+      // if (result.length === 1) {
+      //   console.log("User details: ", result[0])
+      // } else {
+      //   console.log("Error")
+      // }
+      res.send(result)
     }
   })
 }

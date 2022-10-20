@@ -118,3 +118,21 @@ exports.SetToInactive = (username, groupname) => {
     })
   })
 }
+
+exports.GetOneUser = username => {
+  return new Promise((resolve, reject) => {
+    let sql = `SELECT * FROM user WHERE username = '${username}'`
+    let sql2 = `UPDATE usergroup SET isactive = true WHERE username= '${username}' AND groupname='${groupname}'`
+
+    db.query(sql, (err, results) => {
+      if (err) {
+        reject(false)
+      } else {
+        if (results[0].isactive === 1) {
+          // console.log("its admin");
+          resolve("true"), results
+        }
+      }
+    })
+  })
+}

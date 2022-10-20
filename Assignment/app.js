@@ -3,10 +3,13 @@ const app = express()
 const sanitizeHTML = require("sanitize-html")
 const jwt = require("jsonwebtoken")
 const dotenv = require("dotenv")
+const cookieParser = require("cookie-parser")
 dotenv.config({ path: "./config/config.env" })
 
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
+
+app.use(cookieParser())
 
 app.use("/", require("./router"))
 
