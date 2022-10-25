@@ -1,11 +1,19 @@
 const sql = require("../config/database")
 
+const groupnamePattern = /^[A-Za-z0-9]+$/
+
 // Create and Save a new Group in db
 exports.createGroup = async (req, res, result) => {
   // Validate request
   if (!req.body) {
     res.status(400).send({
       message: "Content can not be empty!"
+    })
+  }
+  if (!req.body.groupname.match(groupnamePattern)) {
+    return res.status(200).send({
+      success: false,
+      message: "Incorrect group name format"
     })
   }
 
@@ -16,17 +24,19 @@ exports.createGroup = async (req, res, result) => {
 
   sql.query("INSERT INTO groupz SET ?", newGroup, (err, result) => {
     if (err) {
-      console.log("error: ", err)
-      // result(err, null)
-      // return
-      res.send("Unable to post results")
-      return
+      if (err.code === "ER_DUP_ENTRY") {
+        res.status(200).send({
+          success: true,
+          message: "Group Name already exist in Database"
+        })
+      }
     } else {
       res.status(200).send({
         success: true,
         results: result.length,
         // requestMethod: req.requestMethod,
         data: result,
+        message: "Group Created",
         newGroup
       })
       // console.log(result)

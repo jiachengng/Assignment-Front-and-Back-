@@ -17,6 +17,12 @@ import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import Select from "react-select"
 import makeAnimated from "react-select/animated"
+import Snackbar from "@mui/material/Snackbar"
+import MuiAlert from "@mui/material/Alert"
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
 const animatedComponents = makeAnimated()
 
@@ -32,7 +38,26 @@ function DisplayUser(props) {
   const [username, setUsername] = useState()
   const [email, setEmail] = useState()
   const [groupname, setGroupname] = useState()
-  const [password, setPassword] = useState()
+  const [password, setPassword] = useState("")
+
+  const [open, setOpen] = React.useState(false)
+  const [message, setMessage] = React.useState("Default")
+  const [success, setSuccess] = React.useState("error")
+
+  const handleClick = () => {
+    setOpen(true)
+  }
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      setOpen(false)
+
+      return
+    }
+
+    setOpen(false)
+  }
+
   var array = []
   const loadData = async () => {
     const response = await Axios.get("http://localhost:8080/displayUserDetails")
@@ -45,10 +70,10 @@ function DisplayUser(props) {
   //   { value: "strawberry", label: "Strawberry" },
   //   { value: "vanilla", label: "Vanilla" }
   // ]
-  const handleChange = options => {
-    setSelectedOptions(options)
-    for (let i = 0; i < options.length; i++) {
-      array.push(options[i].value)
+  const handleChange = optionss => {
+    setSelectedOptions(optionss)
+    for (let i = 0; i < optionss.length; i++) {
+      array.push(optionss[i].value)
     }
     console.log("Array: ")
     console.log(array)
@@ -65,7 +90,8 @@ function DisplayUser(props) {
     setUsername(username)
     setEmail(email)
     setPassword(password)
-    setGroupname(groups)
+    // setGroupname(groups)
+
     // for (let i = 0; i < data2.length; i++) {
     //   options.push(data2[i])
     // }
@@ -93,7 +119,8 @@ function DisplayUser(props) {
   async function submit(e) {
     // e.preventDefault()
     const response = await Axios.post("http://localhost:8080/updateUserDetails", { username, email, password })
-    if (response.data.updated === 1) {
+    // if (response.data.updated === 1) {
+    if (response.data) {
       console.log("User table successfully Updated")
       var usergroup = []
       console.log("Printing groupArray values: ")
@@ -104,9 +131,17 @@ function DisplayUser(props) {
         usergroup.push(group)
       }
       const response2 = await Axios.post("http://localhost:8080/editUserGroup", { username, usergroup })
-      if (response2.data.updated === 1) {
+      // if (response2.data.updated === 1) {
+      // console.log("************************")
+      // console.log(response2.data.updated)
+      // console.log(response.data.message)
+      if (response2.data.updated === true && response.data.message == "User details updated") {
+        setSuccess("success")
         console.log("User table successfully Updated")
       }
+      console.log("TESTINGME")
+      setMessage(response.data.message)
+      setOpen(true)
       // console.log(selectedOptions)
       setEditUser()
     } else {
@@ -146,90 +181,98 @@ function DisplayUser(props) {
   const rows = [createData("Frozen yoghurt", "159", "cnrojencr"), createData("Frozen yoghurt", "159", "cnrojencr"), createData("Frozen yoghurt", "159", "cnrojencr")]
 
   return (
-    <TableContainer component={Paper}>
-      <Table className="table" aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            {/* <TableCell align="right">No.</TableCell> */}
-            <TableCell width={10} align="center" className="helen">
-              User Name
-            </TableCell>
-            <TableCell width={10} align="center">
-              Email
-            </TableCell>
-            <TableCell width={10} align="center">
-              Password
-            </TableCell>
-            <TableCell width={20} align="center">
-              Groups
-            </TableCell>
-            <TableCell width={10} align="center">
-              Action
-            </TableCell>
-            {/* <TableCell align="right">Protein&nbsp;(g)</TableCell> */}
-          </TableRow>
-        </TableHead>
-        {/* {data.map((item, index) => xxx)} */}
-        {/* {editUser == item.username && ( */}
-        <TableBody>
-          {data.map((item, index) => {
-            return (
-              <TableRow key={item.name}>
-                {editUser !== item.username && (
-                  <>
-                    <TableCell align="center">{item.username}</TableCell>
-                    <TableCell align="center">{item.email}</TableCell>
-                    <TableCell align="center">********</TableCell>
-                    <TableCell align="center">{item.groups}</TableCell>
-                    <TableCell align="center">
-                      {/* <Button onClick={() => managerUserButtonFunction(item.username, item.email, item.password, item.groups)} className="py-1 mt-1 btn btn-lg btn-success btn-block" color="grey">
+    <div>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={success} sx={{ width: "100%" }}>
+          {message}
+        </Alert>
+      </Snackbar>
+
+      <TableContainer component={Paper}>
+        <Table className="table" aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              {/* <TableCell align="right">No.</TableCell> */}
+              <TableCell width={10} align="center" className="helen">
+                User Name
+              </TableCell>
+              <TableCell width={10} align="center">
+                Email
+              </TableCell>
+              <TableCell width={10} align="center">
+                Password
+              </TableCell>
+              <TableCell width={20} align="center">
+                Groups
+              </TableCell>
+              <TableCell width={10} align="center">
+                Action
+              </TableCell>
+              {/* <TableCell align="right">Protein&nbsp;(g)</TableCell> */}
+            </TableRow>
+          </TableHead>
+          {/* {data.map((item, index) => xxx)} */}
+          {/* {editUser == item.username && ( */}
+          <TableBody>
+            {data.map((item, index) => {
+              return (
+                <TableRow key={item.name}>
+                  {editUser !== item.username && (
+                    <>
+                      <TableCell align="center">{item.username}</TableCell>
+                      <TableCell align="center">{item.email}</TableCell>
+                      <TableCell align="center">********</TableCell>
+                      <TableCell align="center">{item.groups}</TableCell>
+                      <TableCell align="center">
+                        {/* <Button onClick={() => managerUserButtonFunction(item.username, item.email, item.password, item.groups)} className="py-1 mt-1 btn btn-lg btn-success btn-block" color="grey">
                         Manage
                       </button> */}
-                      <Button onClick={() => managerUserButtonFunction(item.username, item.email, item.password, item.groups)} variant="contained" size="small">
-                        Edit
-                      </Button>
-                    </TableCell>
-                  </>
-                )}
+                        <Button onClick={() => managerUserButtonFunction(item.username, item.email, item.password, item.groups)} variant="contained" size="small">
+                          Edit
+                        </Button>
+                      </TableCell>
+                    </>
+                  )}
 
-                {editUser === item.username && (
-                  <>
-                    <TableCell align="center">
-                      <input size="3" value={item.username} disabled />
-                    </TableCell>
-                    <TableCell align="center">
-                      <input size="10" type="text" onChange={e => setEmail(e.target.value)} defaultValue={item.email} />
-                    </TableCell>
-                    <TableCell align="center">
-                      <input size="3" type="password" onChange={e => setPassword(e.target.value)} />
-                    </TableCell>
-                    <TableCell align="center" style={{ width: "300px" }}>
-                      {/* <input size="3" onChange={e => setGroupname(e.target.value)} defaultValue={item.groups} /> */}
-                      {/* <Select closeMenuOnSelect={false} defaultValue={[]} isMulti name="colors" isClearable={false} options={data2} className="basic-multi-select" classNamePrefix="select" /> */}
-                      <Select closeMenuOnSelect={false} components={animatedComponents} defaultValue={defaultGroups} isMulti options={data2} onChange={handleChange} />
-                    </TableCell>
-                    <TableCell align="center">
-                      {/* <button type="submit" onClick={() => submit()} className="py-1 mt-1 btn btn-lg btn-success btn-block" color="grey">
+                  {editUser === item.username && (
+                    <>
+                      <TableCell align="center">
+                        <input size="3" value={item.username} disabled />
+                      </TableCell>
+                      <TableCell align="center">
+                        <input size="10" type="text" onChange={e => setEmail(e.target.value)} defaultValue={item.email} />
+                      </TableCell>
+                      <TableCell align="center">
+                        <input size="3" type="password" id="input-box" onChange={e => setPassword(e.target.value)} />
+                      </TableCell>
+                      <TableCell align="center" style={{ width: "300px" }}>
+                        {/* <input size="3" onChange={e => setGroupname(e.target.value)} defaultValue={item.groups} /> */}
+                        {/* <Select closeMenuOnSelect={false} defaultValue={[]} isMulti name="colors" isClearable={false} options={data2} className="basic-multi-select" classNamePrefix="select" /> */}
+                        <Select closeMenuOnSelect={false} components={animatedComponents} defaultValue={defaultGroups} isMulti options={data2} onChange={handleChange} />
+                      </TableCell>
+                      <TableCell align="center">
+                        {/* <button type="submit" onClick={() => submit()} className="py-1 mt-1 btn btn-lg btn-success btn-block" color="grey">
                         Update
                       </button> */}
-                      <Button width="50%" onClick={() => submit()} variant="contained" size="small" style={{ marginBottom: "5px" }}>
-                        Update
-                      </Button>
-                      {/* <button onClick={() => setEditUser()} className="py-1 mt-1 btn btn-lg btn-success btn-block" color="grey">
+                        <Button width="50%" onClick={() => submit()} variant="contained" size="small" style={{ marginBottom: "5px" }}>
+                          Update
+                        </Button>
+                        {/* <button onClick={() => setEditUser()} className="py-1 mt-1 btn btn-lg btn-success btn-block" color="grey">
                         Cancel
                       </button> */}
-                      <Button width="50%" onClick={() => setEditUser()} variant="contained" size="small">
-                        Cancel
-                      </Button>
-                    </TableCell>
-                  </>
-                )}
-              </TableRow>
-            )
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+                        <Button width="50%" onClick={() => setEditUser()} variant="contained" size="small">
+                          Cancel
+                        </Button>
+                      </TableCell>
+                    </>
+                  )}
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   )
 }
 

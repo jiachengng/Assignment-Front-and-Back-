@@ -7,12 +7,34 @@ const jwt = require("jsonwebtoken")
 const sendToken = require("../jwtToken")
 const CheckGroup = require("../checkGroup")
 
+const usernamePattern = /^[A-Za-z0-9]+$/
+const passwordPattern = /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,10}$/ // Assert a string to have at least
+const emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+
 // Create and Save a new User in db
 exports.createUser = async (req, res, result) => {
   // Validate request
   if (!req.body) {
     res.status(400).send({
       message: "Content can not be empty!"
+    })
+  }
+  if (!req.body.username.trim().match(usernamePattern)) {
+    return res.status(200).send({
+      success: false,
+      message: "Incorrect username format"
+    })
+  }
+  if (!req.body.email.trim().match(emailPattern)) {
+    return res.status(200).send({
+      success: false,
+      message: "Incorrect email format"
+    })
+  }
+  if (!req.body.password.trim().match(passwordPattern)) {
+    return res.status(200).send({
+      success: false,
+      message: "Incorrect password format"
     })
   }
 
@@ -246,8 +268,6 @@ exports.editUserGroup = async (req, res) => {
 //GET ALL USERS
 //===========================================================================
 exports.updateUserDetails = async (req, res) => {
-  const passwordPattern = /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,10}$/ // Assert a string to have at least
-  const emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
   console.log("PASSWORD: " + req.body.password)
   console.log("EMAIL: " + req.body.email)
   // Validate request

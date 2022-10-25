@@ -86,8 +86,8 @@ function CreateUser(props) {
 
       setCount(count + 1)
 
-      setMessage(response.data.message)
-      setOpen(true)
+      // setMessage(response.data.message)
+      // setOpen(true)
     } else {
       console.log("Error")
     }
@@ -97,12 +97,16 @@ function CreateUser(props) {
   async function submit2(e) {
     e.preventDefault()
     const response = await Axios.post("http://localhost:8080/createGroup", { groupname })
-    if (response.data) {
+    if (response.data.message == "Group Created") {
       console.log("Group successfully created")
-      console.log(response.data)
+      setSuccess("success")
+      closeModal()
+      // console.log(response.data)
     } else {
       console.log("Error")
     }
+    setMessage(response.data.message)
+    setOpen(true)
   }
   useEffect(() => {}, [props.users])
   // props.onSubmit(count)
