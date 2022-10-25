@@ -25,17 +25,20 @@ exports.createUser = async (req, res, result) => {
 
   sql.query("INSERT INTO user SET ?", newAccount, (err, result) => {
     if (err) {
-      console.log("error: ", err)
-      // result(err, null)
-      // return
-      res.send("Unable to post results")
-      return
+      if (err.code === "ER_DUP_ENTRY") {
+        res.status(200).send({
+          success: true,
+          message: "Username already exist in Database"
+        })
+      }
     } else {
+      console.log(result)
       res.status(200).send({
         success: true,
         results: result.length,
         // requestMethod: req.requestMethod,
         data: result,
+        message: "User Created",
         newAccount
       })
       // console.log(result)
@@ -78,8 +81,10 @@ exports.logIn = (req, res) => {
   sql.query(`SELECT * FROM user WHERE username = '${req.body.username}' AND isactive = true `, async (err, result) => {
     if (err) {
       console.log("error: ", err)
-      res.send("Unable to get results")
       return
+      res.status(200).send({
+        message: "Invalid login details"
+      })
     } else {
       if (result.length === 1) {
         console.log("found account: ", result[0])
@@ -88,6 +93,7 @@ exports.logIn = (req, res) => {
         if (trueornot) {
           console.log("Logged in")
           sendToken(req.body.username, 200, res)
+
           // const token = this.getJwtToken(req.body.username)
 
           // res.status(200).send({
@@ -97,9 +103,16 @@ exports.logIn = (req, res) => {
           //   data: result,
           //   token: token
           // })
+        } else {
+          console.log("account cannot be found")
+          return res.status(200).send({
+            message: "Invalid login details"
+          })
         }
       } else {
-        console.log("account cannot be found")
+        return res.status(200).send({
+          message: "Invalid login details"
+        })
       }
     }
   })
@@ -221,7 +234,8 @@ exports.editUserGroup = async (req, res) => {
       //delete and move to another side later
       res.status(200).send({
         success: true,
-        data: result
+        data: result,
+        updated: true
       })
     }
     // console.log("created account: ", { id: res.insertId, ...newAccount })
@@ -232,34 +246,109 @@ exports.editUserGroup = async (req, res) => {
 //GET ALL USERS
 //===========================================================================
 exports.updateUserDetails = async (req, res) => {
+  const passwordPattern = /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,10}$/ // Assert a string to have at least
+  const emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+  console.log("PASSWORD: " + req.body.password)
+  console.log("EMAIL: " + req.body.email)
   // Validate request
-  if (!req.body) {
-    res.status(400).send({
-      message: "Content can not be empty!"
+  // if (!req.body) {
+  //   res.status(400).send({
+  //     message: "Content can not be empty!"
+  //   })
+  // }
+
+  // if no password input
+  if (req.body.password.trim() < 1 && req.body.email.trim() < 1) {
+    console.log("IF NO PASSWORD AND EMAIL")
+    res.status(200).send({
+      message: "Nothing is changed"
     })
-  }
-  var newPassword = await bcrypt.hash(req.body.password, 10)
-  //UPDATE user SET password = "ryan1234", email = "ryan@gmail.com" WHERE username = "ryan";
-  sql.query(`UPDATE user SET password = '${newPassword}', email = '${req.body.email}' WHERE username = '${req.body.username}'`, async (err, result) => {
-    if (err) {
-      console.log("error: ", err)
-      res.send("Unable to get results")
-      return
-    } else {
-      console.log(result)
-      if (result.changedRows === 1) {
-        console.log("User details updated. ")
+  } else if (req.body.password.trim() < 1) {
+    console.log("IF NO PASSWORD")
+    sql.query(`UPDATE user SET email = '${req.body.email.trim()}' WHERE username = '${req.body.username}'`, async (err, result) => {
+      if (err) {
+        console.log("error: ", err)
+        res.send("Unable to get results")
+        return
       } else {
-        console.log("Error")
+        console.log(result)
+        if (result.changedRows === 1 || result.affectedRows === 1) {
+          console.log("User details updated. ")
+          res.status(200).send({
+            success: true,
+            results: result.length,
+            // requestMethod: req.requestMethod,
+            updated: 1,
+            message: "User details updated"
+          })
+        } else {
+          console.log("Error")
+        }
       }
-      res.status(200).send({
-        success: true,
-        results: result.length,
-        // requestMethod: req.requestMethod,
-        data: result
+    }) // if no email input
+  } else if (req.body.email.trim() < 1) {
+    console.log("IF NO EMAIL")
+    var newPassword = await bcrypt.hash(req.body.password.trim(), 10)
+    //UPDATE user SET password = "ryan1234", email = "ryan@gmail.com" WHERE username = "ryan";
+    sql.query(`UPDATE user SET password = '${newPassword}' WHERE username = '${req.body.username}'`, async (err, result) => {
+      if (err) {
+        console.log("error: ", err)
+        res.send("Unable to get results")
+        return
+      } else {
+        console.log(result)
+        if (result.changedRows === 1 || result.affectedRows === 1) {
+          console.log("User details updated. ")
+          res.status(200).send({
+            success: true,
+            results: result.length,
+            // requestMethod: req.requestMethod,
+            updated: 1,
+            message: "User details updated"
+          })
+        } else {
+          console.log("Error")
+        }
+      }
+    })
+  } else {
+    console.log("IF ALL FIELDS THERE")
+    if (!req.body.email.trim().match(emailPattern)) {
+      return res.status(200).send({
+        success: false,
+        message: "Incorrect email format"
       })
     }
-  })
+    if (!req.body.password.trim().match(passwordPattern)) {
+      return res.status(200).send({
+        success: false,
+        message: "Incorrect password format"
+      })
+    }
+    var newPassword = await bcrypt.hash(req.body.password.trim(), 10)
+    //UPDATE user SET password = "ryan1234", email = "ryan@gmail.com" WHERE username = "ryan";
+    sql.query(`UPDATE user SET password = '${newPassword}', email = '${req.body.email.trim()}' WHERE username = '${req.body.username}'`, async (err, result) => {
+      if (err) {
+        console.log("error: ", err)
+        res.send("Unable to get results")
+        return
+      } else {
+        console.log(result)
+        if (result.changedRows === 1) {
+          console.log("User details updated. ")
+          res.status(200).send({
+            success: true,
+            results: result.length,
+            // requestMethod: req.requestMethod,
+            message: "User details updated",
+            updated: 1
+          })
+        } else {
+          console.log("Error")
+        }
+      }
+    })
+  }
 }
 //=========================================================
 exports.getJwtToken = function (username) {
@@ -332,8 +421,6 @@ exports.authUser = async (req, res) => {
       console.log("decode = ")
       console.log(decode.id)
       if (req.body.username === decode.id) {
-        console.log("IS ADMIN: " + isAdmin)
-        console.log("USERNAME: " + decode.id)
         res.status(200).send({
           login: true,
           isAdmin: isAdmin,

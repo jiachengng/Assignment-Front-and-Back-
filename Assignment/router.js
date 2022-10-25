@@ -22,6 +22,7 @@ apiRouter.route("/displayUserDetails").get(userController.displayUserDetails)
 apiRouter.route("/displayOneUserDetails").post(userController.displayOneUserDetails)
 apiRouter.route("/displayOneUserGroup").post(userController.displayOneUserGroup)
 apiRouter.route("/authUser").post(userController.authUser)
+apiRouter.route("/getAllGroups").post(groupController.getAllGroups)
 
 //ROUTES TO CHECK ID WITH NAME
 // apiRouter.route("/findUsernameById").post(userController.findUsernameById)

@@ -12,6 +12,11 @@ function HeaderLoggedIn(props) {
     navigate(`/editUser`)
   }
 
+  const handleClick2 = () => {
+    sessionStorage.clear()
+    navigate(`/`)
+  }
+
   return (
     <header className="header-bar bg-primary mb-3">
       <div className="container d-flex flex-column flex-md-row align-items-center p-3">
@@ -23,6 +28,10 @@ function HeaderLoggedIn(props) {
         </h4>
         <Button onClick={handleClick} variant="contained" color="primary">
           Edit Profile
+        </Button>
+        <div></div>
+        <Button onClick={handleClick2} variant="contained" color="secondary">
+          Log Out
         </Button>
         <form className="mb-0 pt-2 pt-md-0">
           <div className="row align-items-center"></div>

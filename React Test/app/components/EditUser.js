@@ -5,23 +5,53 @@ import { useNavigate } from "react-router-dom"
 import Header from "./Header"
 import HeaderLoggedIn from "./HeaderLoggedIn"
 import HeaderAdmin from "./HeaderAdmin"
+import Snackbar from "@mui/material/Snackbar"
+import MuiAlert from "@mui/material/Alert"
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
 function EditUser() {
   const [username, setUsername] = useState()
-  const [email, setEmail] = useState()
-  const [password, setPassword] = useState()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
   const [groups, setGroups] = useState()
   const [loggedIn, setLoggedIn] = useState()
   const [isAdmin, setisAdmin] = useState()
   const navigate = useNavigate()
 
+  const [open, setOpen] = React.useState(false)
+  const [message, setMessage] = React.useState("Default")
+  const [success, setSuccess] = React.useState("error")
+
+  const handleClick = () => {
+    setOpen(true)
+  }
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      setOpen(false)
+
+      return
+    }
+
+    setOpen(false)
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
-
     const response = await Axios.post("http://localhost:8080/updateUserDetails", { username, password, email })
     if (response.data) {
-      console.log("User successfully updated")
-      console.log(response.data)
+      //console.log("User successfully updated")
+      console.log(response.data.message)
+      // setMessage("KEKEKEKE")
+      // setMessage(response.data.message)
+      if (response.data.message == "User details updated") {
+        setSuccess("success")
+      }
+      setMessage(response.data.message)
+      setOpen(true)
     }
   }
 
@@ -54,6 +84,7 @@ function EditUser() {
     const response = await Axios.post("http://localhost:8080/displayOneUserDetails", { username })
     setData(response.data)
     console.log("Username2: " + username)
+    console.log("Email: " + response.data[0].email)
     console.log(response.data[0].email)
     setEmail(response.data[0].email)
   }
@@ -93,6 +124,11 @@ function EditUser() {
 
   return (
     <div>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={success} sx={{ width: "100%" }}>
+          {message}
+        </Alert>
+      </Snackbar>
       {isAdmin ? <HeaderAdmin /> : <HeaderLoggedIn />}
       <Page title="Home" wide="True">
         <div className="row align-items-center">
@@ -108,7 +144,7 @@ function EditUser() {
                 <label for="email-register" className="text-muted mb-1">
                   <small>Email</small>
                 </label>
-                <input onChange={e => setEmail(e.target.value)} id="email-register" name="email" className="form-control" type="text" value={email} autoComplete="off" required />
+                <input onChange={e => setEmail(e.target.value)} id="email-register" name="email" className="form-control" type="text" value={email} autoComplete="off" />
               </div>
               <div className="form-group">
                 <label for="password-register" className="text-muted mb-1">

@@ -14,6 +14,10 @@ function HeaderAdmin(props) {
   const handleClick2 = () => {
     navigate(`/manageUsers`)
   }
+  const handleClick3 = () => {
+    sessionStorage.clear()
+    navigate(`/`)
+  }
 
   return (
     <header className="header-bar bg-primary mb-3">
@@ -29,6 +33,9 @@ function HeaderAdmin(props) {
         </Button>
         <Button onClick={handleClick2} variant="contained" color="Red">
           Manage Users
+        </Button>
+        <Button onClick={handleClick3} variant="contained" color="secondary">
+          Log Out
         </Button>
         <form className="mb-0 pt-2 pt-md-0">
           <div className="row align-items-center"></div>

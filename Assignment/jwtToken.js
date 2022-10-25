@@ -1,4 +1,5 @@
 const User = require("./controllers/userController")
+const CheckGroup = require("./checkGroup")
 
 const sendToken = (username, statusCode, res) => {
   const token = User.getJwtToken(username)
@@ -8,11 +9,13 @@ const sendToken = (username, statusCode, res) => {
     httpOnly: true
   }
 
-  res.status(statusCode).cookie("token", token, options).json({
-    success: true,
-    username: username,
-    token
-  })
+  if ((username, "admin"))
+    res.status(statusCode).cookie("token", token, options).json({
+      success: true,
+      username: username,
+      message: "Login Successfully",
+      token
+    })
 }
 
 module.exports = sendToken

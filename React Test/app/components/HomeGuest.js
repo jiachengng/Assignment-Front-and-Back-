@@ -4,6 +4,12 @@ import Axios from "axios"
 import { useNavigate } from "react-router-dom"
 import Header from "./Header"
 import HeaderLoggedIn from "./HeaderLoggedIn"
+import Snackbar from "@mui/material/Snackbar"
+import MuiAlert from "@mui/material/Alert"
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
 function HomeGuest(props) {
   const [username, setUsername] = useState()
@@ -12,11 +18,30 @@ function HomeGuest(props) {
   const navigate = useNavigate()
   const [loggedIn, setLoggedIn] = useState()
 
+  const [open, setOpen] = React.useState(false)
+  const [message, setMessage] = React.useState("Default")
+
+  const handleClick = () => {
+    setOpen(true)
+  }
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      setOpen(false)
+
+      return
+    }
+
+    setOpen(false)
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     // try {
     const response = await Axios.post("http://localhost:8080/logIn", { username, password })
-    if (response.data) {
+    console.log(response)
+    if (response.data.message == "Login Successfully") {
+      // if (response.length == 1) {
       console.log("User successfully logged in")
       console.log(response.data)
       // setLoggedIn(true)
@@ -33,6 +58,9 @@ function HomeGuest(props) {
       navigate(`/dashBoard`)
     } else {
       console.log("Incorrect username/password")
+      setMessage(response.data.message)
+      // setMessage(response.data.message)
+      setOpen(true)
     }
     // }
     // catch (e) {
@@ -41,6 +69,11 @@ function HomeGuest(props) {
   }
   return (
     <div>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+          {message}
+        </Alert>
+      </Snackbar>
       <Header />
       <Page title="Home" wide="True">
         <div className="row align-items-center">
@@ -54,7 +87,7 @@ function HomeGuest(props) {
                 <label htmlFor="username-register" className="text-muted mb-1">
                   <small>Username</small>
                 </label>
-                <input onChange={e => setUsername(e.target.value)} id="username-register" name="username" className="form-control" type="text" placeholder="Enter username" autocomplete="off" />
+                <input onChange={e => setUsername(e.target.value)} id="username-register" name="username" className="form-control" type="text" placeholder="Enter username" autocomplete="off" required />
               </div>
               <div className="form-group">
                 {/* <label for="email-register" className="text-muted mb-1">
@@ -66,7 +99,7 @@ function HomeGuest(props) {
                 <label for="password-register" className="text-muted mb-1">
                   <small>Password</small>
                 </label>
-                <input onChange={e => setPassword(e.target.value)} id="password-register" name="password" className="form-control" type="password" placeholder="Enter Password" />
+                <input onChange={e => setPassword(e.target.value)} id="password-register" name="password" className="form-control" type="password" placeholder="Enter Password" required />
               </div>
               <button type="submit" className="py-3 mt-4 btn btn-lg btn-success btn-block">
                 Login

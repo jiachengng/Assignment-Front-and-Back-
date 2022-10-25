@@ -13,15 +13,18 @@ import TableRow from "@material-ui/core/TableRow"
 import Paper from "@material-ui/core/Paper"
 import Header from "./Header"
 import HeaderLoggedIn from "./HeaderLoggedIn"
+import Box from "@mui/material/Box"
+import Button from "@mui/material/Button"
+import Select from "react-select"
+import makeAnimated from "react-select/animated"
 
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650
-  }
-})
+const animatedComponents = makeAnimated()
 
 function DisplayUser(props) {
   const [data, setData] = useState([])
+  const [data2, setData2] = useState([])
+  const [selectedOptions, setSelectedOptions] = useState([])
+  const [defaultGroups, setDefaultGroups] = useState([])
   const [loggedIn, setLoggedIn] = useState()
   const [isAdmin, setisAdmin] = useState()
   const [count, setCount] = useState(50)
@@ -30,26 +33,82 @@ function DisplayUser(props) {
   const [email, setEmail] = useState()
   const [groupname, setGroupname] = useState()
   const [password, setPassword] = useState()
+  var array = []
   const loadData = async () => {
     const response = await Axios.get("http://localhost:8080/displayUserDetails")
     setData(response.data)
     // const rows = response.data
     // console.log("HELLO")
   }
+  // var options = [
+  //   { value: "chocolate", label: "Chocolate" },
+  //   { value: "strawberry", label: "Strawberry" },
+  //   { value: "vanilla", label: "Vanilla" }
+  // ]
+  const handleChange = options => {
+    setSelectedOptions(options)
+    for (let i = 0; i < options.length; i++) {
+      array.push(options[i].value)
+    }
+    console.log("Array: ")
+    console.log(array)
+    setSelectedOptions(array)
+  }
+
+  const loadData2 = async () => {
+    const response = await Axios.post("http://localhost:8080/getAllGroups")
+    setData2(response.data.data)
+  }
+
   function managerUserButtonFunction(username, email, password, groups) {
     setEditUser(username)
     setUsername(username)
     setEmail(email)
     setPassword(password)
     setGroupname(groups)
+    // for (let i = 0; i < data2.length; i++) {
+    //   options.push(data2[i])
+    // }
+    // console.log(options)
+    if (groups == null) {
+      setDefaultGroups()
+    } else {
+      var arrayDefaultGroup = groups.split(/[, ]+/)
+      console.log("Printing split groups: ")
+      console.log(arrayDefaultGroup)
+      var options = []
+      for (let i = 0; i < arrayDefaultGroup.length; i++) {
+        var group = new Object()
+        // console.log(result)
+        group.value = arrayDefaultGroup[i]
+        group.label = arrayDefaultGroup[i]
+        options.push(group)
+      }
+      setDefaultGroups(options)
+    }
+    console.log("Printing default groups: ")
+    console.log(options)
   }
 
   async function submit(e) {
     // e.preventDefault()
     const response = await Axios.post("http://localhost:8080/updateUserDetails", { username, email, password })
-    if (response.data) {
-      console.log("User successfully Updated")
-      console.log(response.data)
+    if (response.data.updated === 1) {
+      console.log("User table successfully Updated")
+      var usergroup = []
+      console.log("Printing groupArray values: ")
+      for (let i = 0; i < selectedOptions.length; i++) {
+        var group = new Object()
+        group.value = selectedOptions[i]
+        console.log(selectedOptions[i])
+        usergroup.push(group)
+      }
+      const response2 = await Axios.post("http://localhost:8080/editUserGroup", { username, usergroup })
+      if (response2.data.updated === 1) {
+        console.log("User table successfully Updated")
+      }
+      // console.log(selectedOptions)
+      setEditUser()
     } else {
       console.log("Error")
     }
@@ -68,9 +127,10 @@ function DisplayUser(props) {
     const username = sessionStorage.getItem("username")
     const token = sessionStorage.getItem("token")
     loadData()
+    loadData2()
     // ,
     // authUser(username, token)
-  }, [props.users])
+  }, [props.users, loadData(), loadData2()])
   // props.onSubmit(count)
   // setCount(count + 1)
 
@@ -91,11 +151,21 @@ function DisplayUser(props) {
         <TableHead>
           <TableRow>
             {/* <TableCell align="right">No.</TableCell> */}
-            <TableCell align="right">User Name</TableCell>
-            <TableCell align="right">Email</TableCell>
-            <TableCell align="right">Password</TableCell>
-            <TableCell align="right">Groups</TableCell>
-            <TableCell align="right">Action</TableCell>
+            <TableCell width={10} align="center" className="helen">
+              User Name
+            </TableCell>
+            <TableCell width={10} align="center">
+              Email
+            </TableCell>
+            <TableCell width={10} align="center">
+              Password
+            </TableCell>
+            <TableCell width={20} align="center">
+              Groups
+            </TableCell>
+            <TableCell width={10} align="center">
+              Action
+            </TableCell>
             {/* <TableCell align="right">Protein&nbsp;(g)</TableCell> */}
           </TableRow>
         </TableHead>
@@ -107,39 +177,50 @@ function DisplayUser(props) {
               <TableRow key={item.name}>
                 {editUser !== item.username && (
                   <>
-                    <TableCell align="right">{item.username}</TableCell>
-                    <TableCell align="right">{item.email}</TableCell>
-                    <TableCell align="right">********</TableCell>
-                    <TableCell align="right">{item.groups}</TableCell>
-                    <TableCell align="right">
-                      <button type="submit" onClick={() => managerUserButtonFunction(item.username, item.email, item.password, item.groups)} className="py-1 mt-2 btn btn-lg btn-success btn-block" color="grey">
+                    <TableCell align="center">{item.username}</TableCell>
+                    <TableCell align="center">{item.email}</TableCell>
+                    <TableCell align="center">********</TableCell>
+                    <TableCell align="center">{item.groups}</TableCell>
+                    <TableCell align="center">
+                      {/* <Button onClick={() => managerUserButtonFunction(item.username, item.email, item.password, item.groups)} className="py-1 mt-1 btn btn-lg btn-success btn-block" color="grey">
                         Manage
-                      </button>
+                      </button> */}
+                      <Button onClick={() => managerUserButtonFunction(item.username, item.email, item.password, item.groups)} variant="contained" size="small">
+                        Edit
+                      </Button>
                     </TableCell>
                   </>
                 )}
 
                 {editUser === item.username && (
                   <>
-                    <TableCell align="right">
-                      <input value={item.username} disabled />
+                    <TableCell align="center">
+                      <input size="3" value={item.username} disabled />
                     </TableCell>
-                    <TableCell align="right">
-                      <input type="text" onChange={e => setEmail(e.target.value)} defaultValue={item.email} />
+                    <TableCell align="center">
+                      <input size="10" type="text" onChange={e => setEmail(e.target.value)} defaultValue={item.email} />
                     </TableCell>
-                    <TableCell align="right">
-                      <input type="password" onChange={e => setPassword(e.target.value)} />
+                    <TableCell align="center">
+                      <input size="3" type="password" onChange={e => setPassword(e.target.value)} />
                     </TableCell>
-                    <TableCell align="right">
-                      <input onChange={e => setGroupname(e.target.value)} defaultValue={item.groups} />
+                    <TableCell align="center" style={{ width: "300px" }}>
+                      {/* <input size="3" onChange={e => setGroupname(e.target.value)} defaultValue={item.groups} /> */}
+                      {/* <Select closeMenuOnSelect={false} defaultValue={[]} isMulti name="colors" isClearable={false} options={data2} className="basic-multi-select" classNamePrefix="select" /> */}
+                      <Select closeMenuOnSelect={false} components={animatedComponents} defaultValue={defaultGroups} isMulti options={data2} onChange={handleChange} />
                     </TableCell>
-                    <TableCell align="right">
-                      <button type="submit" onClick={() => submit()} className="py-1 mt-2 btn btn-lg btn-success btn-block" color="grey">
+                    <TableCell align="center">
+                      {/* <button type="submit" onClick={() => submit()} className="py-1 mt-1 btn btn-lg btn-success btn-block" color="grey">
                         Update
-                      </button>
-                      <button onClick={() => setEditUser()} className="py-1 mt-2 btn btn-lg btn-success btn-block" color="grey">
+                      </button> */}
+                      <Button width="50%" onClick={() => submit()} variant="contained" size="small" style={{ marginBottom: "5px" }}>
+                        Update
+                      </Button>
+                      {/* <button onClick={() => setEditUser()} className="py-1 mt-1 btn btn-lg btn-success btn-block" color="grey">
                         Cancel
-                      </button>
+                      </button> */}
+                      <Button width="50%" onClick={() => setEditUser()} variant="contained" size="small">
+                        Cancel
+                      </Button>
                     </TableCell>
                   </>
                 )}

@@ -69,3 +69,38 @@ exports.getUserGroupByUserName = async (req, res, result) => {
     // result(null, { id: res.insertId, ...newAccount })
   })
 }
+
+exports.getAllGroups = async (req, res, result) => {
+  // Validate request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    })
+  }
+  sql.query("SELECT * FROM groupz where isactive =1", (err, result) => {
+    if (err) {
+      console.log("error: ", err)
+      // result(err, null)
+      // return
+      res.send("Unable to post results")
+      return
+    } else {
+      var options = []
+      for (let i = 0; i < result.length; i++) {
+        var group = new Object()
+        // console.log(result)
+        group.value = result[i].groupname
+        group.label = result[i].groupname
+        options.push(group)
+      }
+      res.status(200).send({
+        success: true,
+        results: result.length,
+        // requestMethod: req.requestMethod,
+        data: options
+      })
+    }
+    // console.log("created account: ", { id: res.insertId, ...newAccount })
+    // result(null, { id: res.insertId, ...newAccount })
+  })
+}

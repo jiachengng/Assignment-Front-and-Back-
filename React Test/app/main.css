@@ -585,3 +585,11 @@ textarea.tall-textarea {
 .ReactModal__Overlay {
   z-index: 1000;
 }
+
+.table {
+  font-size: 1px;
+}
+
+.helen {
+  font-size: x-small;
+}
