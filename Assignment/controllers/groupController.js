@@ -10,7 +10,7 @@ exports.createGroup = async (req, res, result) => {
       message: "Content can not be empty!"
     })
   }
-  if (!req.body.groupname.match(groupnamePattern)) {
+  if (!req.body.groupname.match(groupnamePattern) || req.body.groupname.length < 2) {
     return res.status(200).send({
       success: false,
       message: "Incorrect group name format"

@@ -15,17 +15,17 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 })
 
 function CreateUser(props) {
-  const [username, setUsername] = useState()
-  const [email, setEmail] = useState()
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
   const [groupname, setGroupname] = useState()
-  const [password, setPassword] = useState()
+  const [password, setPassword] = useState("")
   const navigate = useNavigate()
   const [loggedIn, setLoggedIn] = useState()
   const [count, setCount] = useState(0)
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [open, setOpen] = React.useState(false)
   const [message, setMessage] = React.useState("Default")
-  const [success, setSuccess] = React.useState("error")
+  const [success, setSuccess] = React.useState()
 
   const handleClick = () => {
     setOpen(true)
@@ -85,11 +85,18 @@ function CreateUser(props) {
       props.onSubmit(count)
 
       setCount(count + 1)
+      setUsername("")
+      setPassword("")
+      setEmail("")
+      document.getElementById("username-register").value = ""
+      document.getElementById("password-register").value = ""
+      document.getElementById("email-register").value = ""
 
       // setMessage(response.data.message)
       // setOpen(true)
     } else {
       console.log("Error")
+      setSuccess("error")
     }
     setMessage(response.data.message)
     setOpen(true)
@@ -102,7 +109,14 @@ function CreateUser(props) {
       setSuccess("success")
       closeModal()
       // console.log(response.data)
-    } else {
+    }
+    // if (response.data.message == "Group Name already exist in Database") {
+    //   setSuccess("false")
+    // }
+    // if (response.data.message == "Incorrect group name format") {
+    //   setSuccess("false")
+    // }
+    else {
       console.log("Error")
     }
     setMessage(response.data.message)
@@ -132,23 +146,24 @@ function CreateUser(props) {
           </div>
           <button onClick={closeModal}>close</button>
         </Modal>
+
         <div className="form-group">
           <label htmlFor="username-register" className="text-muted mb-1">
             <small>Username</small>
           </label>
-          <input onChange={e => setUsername(e.target.value)} id="username-register" name="username" className="form-control" type="text" placeholder="Enter username" autocomplete="off" />
+          <input onChange={e => setUsername(e.target.value)} id="username-register" name="username" className="form-control" type="text" placeholder="Enter username" autocomplete="off" required />
         </div>
         <div className="form-group">
           <label for="email-register" className="text-muted mb-1">
             <small>Email</small>
           </label>
-          <input onChange={e => setEmail(e.target.value)} id="email-register" name="email" className="form-control" type="text" placeholder="you@example.com" autoComplete="off" required />
+          <input onChange={e => setEmail(e.target.value)} id="email-register" name="email" className="form-control" type="text" placeholder="you@example.com" required autoComplete="off" />
         </div>
         <div className="form-group">
           <label for="password-register" className="text-muted mb-1">
             <small>Password</small>
           </label>
-          <input onChange={e => setPassword(e.target.value)} id="password-register" name="password" className="form-control" type="password" placeholder="Enter Password" />
+          <input onChange={e => setPassword(e.target.value)} id="password-register" name="password" className="form-control" type="password" required placeholder="Enter Password" />
         </div>
         <div></div>
         <button onClick={submit} className="py-1 mt-2 btn btn-lg btn-success btn-block">
@@ -159,8 +174,8 @@ function CreateUser(props) {
         Toggle Popper
       </button> */}
       </form>
-      <button className="py-1 mt-2 btn btn-lg btn-success btn-block" onClick={openModal}>
-        Create Group
+      <button className="py-1 mt-2 btn btn-lg btn-warning btn-block" onClick={openModal}>
+        + Create Group
       </button>
     </div>
   )

@@ -44,6 +44,13 @@ function DisplayUser(props) {
   const [message, setMessage] = React.useState("Default")
   const [success, setSuccess] = React.useState("error")
 
+  const [isactive, setChecked] = React.useState(false)
+  const [onChanged, setOnChanged] = React.useState(false)
+
+  const handleChange2 = () => {
+    setChecked(!isactive)
+  }
+
   const handleClick = () => {
     setOpen(true)
   }
@@ -70,11 +77,16 @@ function DisplayUser(props) {
   //   { value: "strawberry", label: "Strawberry" },
   //   { value: "vanilla", label: "Vanilla" }
   // ]
+  // function handleCloseGrp() {
+  //   console.log("Close")
+  //   setChanged(username)
+  // }
   const handleChange = optionss => {
     setSelectedOptions(optionss)
     for (let i = 0; i < optionss.length; i++) {
       array.push(optionss[i].value)
     }
+    setOnChanged(true)
     console.log("Array: ")
     console.log(array)
     setSelectedOptions(array)
@@ -85,12 +97,22 @@ function DisplayUser(props) {
     setData2(response.data.data)
   }
 
-  function managerUserButtonFunction(username, email, password, groups) {
+  function managerUserButtonFunction(username, email, password, groups, isactive) {
+    // setGroupname()
+    setGroupname(groups)
     setEditUser(username)
     setUsername(username)
     setEmail(email)
-    setPassword(password)
-    // setGroupname(groups)
+    if (password.length > 15) {
+      setPassword("")
+    } else {
+      setPassword(password)
+    }
+    if (isactive == 1) {
+      setChecked(true)
+    } else {
+      setChecked(false)
+    }
 
     // for (let i = 0; i < data2.length; i++) {
     //   options.push(data2[i])
@@ -118,7 +140,7 @@ function DisplayUser(props) {
 
   async function submit(e) {
     // e.preventDefault()
-    const response = await Axios.post("http://localhost:8080/updateUserDetails", { username, email, password })
+    const response = await Axios.post("http://localhost:8080/updateUserDetails", { username, email, password, isactive })
     // if (response.data.updated === 1) {
     if (response.data) {
       console.log("User table successfully Updated")
@@ -130,20 +152,31 @@ function DisplayUser(props) {
         console.log(selectedOptions[i])
         usergroup.push(group)
       }
-      const response2 = await Axios.post("http://localhost:8080/editUserGroup", { username, usergroup })
+      console.log(usergroup)
+
+      if (onChanged == true) {
+        const response2 = await Axios.post("http://localhost:8080/editUserGroup", { username, usergroup })
+        setOnChanged(false)
+      }
+      // const response2 = await Axios.post("http://localhost:8080/editUserGroup", { username, usergroup })
       // if (response2.data.updated === 1) {
       // console.log("************************")
       // console.log(response2.data.updated)
       // console.log(response.data.message)
-      if (response2.data.updated === true && response.data.message == "User details updated") {
+      if (response.data.message == "User details updated") {
         setSuccess("success")
         console.log("User table successfully Updated")
+      }
+      if (response.data.message == "Incorrect email format") {
+        setSuccess("error")
       }
       console.log("TESTINGME")
       setMessage(response.data.message)
       setOpen(true)
       // console.log(selectedOptions)
       setEditUser()
+      // setGroupname()
+      // setDefaultGroups()
     } else {
       console.log("Error")
     }
@@ -205,6 +238,10 @@ function DisplayUser(props) {
               <TableCell width={20} align="center">
                 Groups
               </TableCell>
+              <TableCell width={20} align="center">
+                Active
+              </TableCell>
+
               <TableCell width={10} align="center">
                 Action
               </TableCell>
@@ -223,11 +260,12 @@ function DisplayUser(props) {
                       <TableCell align="center">{item.email}</TableCell>
                       <TableCell align="center">********</TableCell>
                       <TableCell align="center">{item.groups}</TableCell>
+                      <TableCell align="center">{item.isactive}</TableCell>
                       <TableCell align="center">
                         {/* <Button onClick={() => managerUserButtonFunction(item.username, item.email, item.password, item.groups)} className="py-1 mt-1 btn btn-lg btn-success btn-block" color="grey">
                         Manage
                       </button> */}
-                        <Button onClick={() => managerUserButtonFunction(item.username, item.email, item.password, item.groups)} variant="contained" size="small">
+                        <Button onClick={() => managerUserButtonFunction(item.username, item.email, item.password, item.groups, item.isactive)} variant="contained" size="small">
                           Edit
                         </Button>
                       </TableCell>
@@ -245,22 +283,26 @@ function DisplayUser(props) {
                       <TableCell align="center">
                         <input size="3" type="password" id="input-box" onChange={e => setPassword(e.target.value)} />
                       </TableCell>
-                      <TableCell align="center" style={{ width: "300px" }}>
+                      <TableCell align="center" style={{ width: "200px" }}>
                         {/* <input size="3" onChange={e => setGroupname(e.target.value)} defaultValue={item.groups} /> */}
                         {/* <Select closeMenuOnSelect={false} defaultValue={[]} isMulti name="colors" isClearable={false} options={data2} className="basic-multi-select" classNamePrefix="select" /> */}
                         <Select closeMenuOnSelect={false} components={animatedComponents} defaultValue={defaultGroups} isMulti options={data2} onChange={handleChange} />
                       </TableCell>
+                      <TableCell>
+                        <input type="checkbox" checked={isactive} onChange={handleChange2} />
+                      </TableCell>
+
                       <TableCell align="center">
                         {/* <button type="submit" onClick={() => submit()} className="py-1 mt-1 btn btn-lg btn-success btn-block" color="grey">
                         Update
                       </button> */}
-                        <Button width="50%" onClick={() => submit()} variant="contained" size="small" style={{ marginBottom: "5px" }}>
+                        <Button width="50%" onClick={() => submit()} variant="contained" size="small" color="success" style={{ marginBottom: "5px" }}>
                           Update
                         </Button>
                         {/* <button onClick={() => setEditUser()} className="py-1 mt-1 btn btn-lg btn-success btn-block" color="grey">
                         Cancel
                       </button> */}
-                        <Button width="50%" onClick={() => setEditUser()} variant="contained" size="small">
+                        <Button width="50%" onClick={() => setEditUser()} variant="contained" color="error" size="small">
                           Cancel
                         </Button>
                       </TableCell>

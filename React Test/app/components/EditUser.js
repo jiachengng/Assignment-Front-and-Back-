@@ -20,9 +20,8 @@ function EditUser() {
   const [loggedIn, setLoggedIn] = useState()
   const [isAdmin, setisAdmin] = useState()
   const navigate = useNavigate()
-
   const [open, setOpen] = React.useState(false)
-  const [message, setMessage] = React.useState("Default")
+  const [message, setMessage] = React.useState("")
   const [success, setSuccess] = React.useState("error")
 
   const handleClick = () => {
@@ -45,11 +44,16 @@ function EditUser() {
     if (response.data) {
       //console.log("User successfully updated")
       console.log(response.data.message)
-      // setMessage("KEKEKEKE")
-      // setMessage(response.data.message)
+      if (response.data.message == "Incorrect email format") {
+        setSuccess("error")
+      }
+      if (response.data.message == "Incorrect password format") {
+        setSuccess("error")
+      }
       if (response.data.message == "User details updated") {
         setSuccess("success")
       }
+
       setMessage(response.data.message)
       setOpen(true)
     }

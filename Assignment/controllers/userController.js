@@ -19,7 +19,7 @@ exports.createUser = async (req, res, result) => {
       message: "Content can not be empty!"
     })
   }
-  if (!req.body.username.trim().match(usernamePattern)) {
+  if (!req.body.username.trim().match(usernamePattern) || req.body.username.trim().length < 5) {
     return res.status(200).send({
       success: false,
       message: "Incorrect username format"
@@ -270,22 +270,33 @@ exports.editUserGroup = async (req, res) => {
 exports.updateUserDetails = async (req, res) => {
   console.log("PASSWORD: " + req.body.password)
   console.log("EMAIL: " + req.body.email)
+  console.log("ISACTIVE: " + req.body.isactive)
   // Validate request
   // if (!req.body) {
   //   res.status(400).send({
   //     message: "Content can not be empty!"
   //   })
   // }
-
-  // if no password input
+  if (req.body.isactive == false) {
+    req.body.isactive = 0
+  } else {
+    req.body.isactive = 1
+  }
+  // if no password no email
   if (req.body.password.trim() < 1 && req.body.email.trim() < 1) {
     console.log("IF NO PASSWORD AND EMAIL")
     res.status(200).send({
       message: "Nothing is changed"
     })
   } else if (req.body.password.trim() < 1) {
+    if (!req.body.email.trim().match(emailPattern)) {
+      return res.status(200).send({
+        success: false,
+        message: "Incorrect email format"
+      })
+    }
     console.log("IF NO PASSWORD")
-    sql.query(`UPDATE user SET email = '${req.body.email.trim()}' WHERE username = '${req.body.username}'`, async (err, result) => {
+    sql.query(`UPDATE user SET email = '${req.body.email.trim()}',isactive = '${req.body.isactive}' WHERE username = '${req.body.username}'`, async (err, result) => {
       if (err) {
         console.log("error: ", err)
         res.send("Unable to get results")
@@ -307,10 +318,16 @@ exports.updateUserDetails = async (req, res) => {
       }
     }) // if no email input
   } else if (req.body.email.trim() < 1) {
+    if (!req.body.password.trim().match(passwordPattern)) {
+      return res.status(200).send({
+        success: false,
+        message: "Incorrect password format"
+      })
+    }
     console.log("IF NO EMAIL")
     var newPassword = await bcrypt.hash(req.body.password.trim(), 10)
     //UPDATE user SET password = "ryan1234", email = "ryan@gmail.com" WHERE username = "ryan";
-    sql.query(`UPDATE user SET password = '${newPassword}' WHERE username = '${req.body.username}'`, async (err, result) => {
+    sql.query(`UPDATE user SET password = '${newPassword}',isactive = '${req.body.isactive}' WHERE username = '${req.body.username}'`, async (err, result) => {
       if (err) {
         console.log("error: ", err)
         res.send("Unable to get results")
@@ -347,7 +364,7 @@ exports.updateUserDetails = async (req, res) => {
     }
     var newPassword = await bcrypt.hash(req.body.password.trim(), 10)
     //UPDATE user SET password = "ryan1234", email = "ryan@gmail.com" WHERE username = "ryan";
-    sql.query(`UPDATE user SET password = '${newPassword}', email = '${req.body.email.trim()}' WHERE username = '${req.body.username}'`, async (err, result) => {
+    sql.query(`UPDATE user SET password = '${newPassword}',isactive = '${req.body.isactive}', email = '${req.body.email.trim()}' WHERE username = '${req.body.username}'`, async (err, result) => {
       if (err) {
         console.log("error: ", err)
         res.send("Unable to get results")
@@ -384,7 +401,7 @@ exports.displayUserDetails = async (req, res) => {
   }
   // sql.query(`SELECT * FROM user`, async (err, result) => {
   sql.query(
-    `SELECT u.username, u.email, u.password, GROUP_CONCAT(ug.groupname ORDER BY ug.groupname ASC SEPARATOR ', ') as 'groups'
+    `SELECT u.username, u.email, u.password, GROUP_CONCAT(ug.groupname ORDER BY ug.groupname ASC SEPARATOR ', ') as 'groups', u.isactive
   FROM user AS u
   LEFT JOIN usergroup AS ug ON ug.username = u.username AND ug.isactive = 1
   GROUP BY u.username`,
@@ -499,7 +516,7 @@ exports.displayOneUserGroup = async (req, res) => {
       message: "Content can not be empty!"
     })
   }
-  sql.query(`SELECT groupname FROM usergroup WHERE username= '${req.body.username}'`, async (err, result) => {
+  sql.query(`SELECT groupname FROM usergroup WHERE username= '${req.body.username}' AND isactive=1`, async (err, result) => {
     console.log("req.body.username = " + req.body.username)
     if (err) {
       console.log("error: ", err)
