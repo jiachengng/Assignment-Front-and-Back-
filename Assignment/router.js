@@ -1,6 +1,7 @@
 const apiRouter = require("express").Router()
 const userController = require("./controllers/userController")
 const groupController = require("./controllers/groupController")
+const applicationController = require("./controllers/applicationController")
 // const usergroupController = require("./controllers/usergroupController")
 const cors = require("cors")
 
@@ -24,6 +25,9 @@ apiRouter.route("/displayOneUserGroup").post(userController.displayOneUserGroup)
 apiRouter.route("/authUser").post(userController.authUser)
 apiRouter.route("/getAllGroups").post(groupController.getAllGroups)
 
+apiRouter.route("/displayApplicationsDetails").post(applicationController.displayApplicationsDetails)
+apiRouter.route("/updateApplication").post(applicationController.updateApplication)
+apiRouter.route("/createApplication").post(applicationController.createApplication)
 //ROUTES TO CHECK ID WITH NAME
 // apiRouter.route("/findUsernameById").post(userController.findUsernameById)
 // apiRouter.route("/findIdByUsername").post(userController.findIdByUsername)

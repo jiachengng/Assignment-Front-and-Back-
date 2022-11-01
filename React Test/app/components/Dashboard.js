@@ -5,6 +5,10 @@ import { useNavigate } from "react-router-dom"
 import Header from "./Header"
 import HeaderLoggedIn from "./HeaderLoggedIn"
 import HeaderAdmin from "./HeaderAdmin"
+import TasksContainer from "./TasksContainer"
+import DisplayApplication from "./DisplayApplication"
+import CreateUser from "./CreaterUser"
+import CreateApplication from "./CreateApplication"
 
 function Dashboard() {
   const [username, setUsername] = useState()
@@ -14,15 +18,20 @@ function Dashboard() {
   const [loggedIn, setLoggedIn] = useState()
   const [isAdmin, setisAdmin] = useState()
   const navigate = useNavigate()
+  const [users, setUsers] = useState(false)
 
-  async function handleSubmit(e) {
-    e.preventDefault()
+  // async function handleSubmit(e) {
+  //   e.preventDefault()
 
-    const response = await Axios.post("http://localhost:8080/updateUserDetails", { username, password, email })
-    if (response.data) {
-      console.log("User successfully updated")
-      console.log(response.data)
-    }
+  //   const response = await Axios.post("http://localhost:8080/updateUserDetails", { username, password, email })
+  //   if (response.data) {
+  //     console.log("User successfully updated")
+  //     console.log(response.data)
+  //   }
+  // }
+  function handleSubmit(newUser) {
+    console.log("supposedly count: " + newUser)
+    setUsers(newUser)
   }
 
   const [data, setData] = useState([])
@@ -102,7 +111,18 @@ function Dashboard() {
   return (
     <div>
       {isAdmin ? <HeaderAdmin /> : <HeaderLoggedIn />}
-      <Page title="Home" wide="True"></Page>
+      <Page title="Home" wide="True">
+        <div className="row">
+          {/* <TasksContainer /> */}
+          <div className="col-lg-9 py-3 py-md-5 py-lg-2">
+            <DisplayApplication users={users} onSubmit={handleSubmit} />
+          </div>
+          <div className="col-lg-3 pl-lg-5 py-3 py-md-5 pb-3 py-lg-1">
+            {/* <CreateUser onSubmit={handleSubmit} /> */}
+            <CreateApplication onSubmit={handleSubmit} />
+          </div>
+        </div>
+      </Page>
     </div>
   )
 }
