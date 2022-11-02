@@ -20,6 +20,7 @@ import makeAnimated from "react-select/animated"
 import Snackbar from "@mui/material/Snackbar"
 import MuiAlert from "@mui/material/Alert"
 import Modal from "react-modal"
+import { Card, CardActions, CardContent, CardMedia, Typography, Container, Grid, Avatar } from "@material-ui/core"
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -27,7 +28,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 const animatedComponents = makeAnimated()
 
-function DisplayApplication(props) {
+function TaskBoard(props) {
   const [data, setData] = useState([])
   const [data2, setData2] = useState([])
   const [selectedOptions, setSelectedOptions] = useState([])
@@ -44,8 +45,6 @@ function DisplayApplication(props) {
   const [email, setEmail] = useState()
   const [groupname, setGroupname] = useState()
   const [password, setPassword] = useState("")
-
-  const navigate = useNavigate()
 
   const [open, setOpen] = React.useState(false)
   const [message, setMessage] = React.useState("Default")
@@ -104,15 +103,6 @@ function DisplayApplication(props) {
     // const rows = response.data
     // console.log("HELLO")
   }
-  // var options = [
-  //   { value: "chocolate", label: "Chocolate" },
-  //   { value: "strawberry", label: "Strawberry" },
-  //   { value: "vanilla", label: "Vanilla" }
-  // ]
-  // function handleCloseGrp() {
-  //   console.log("Close")
-  //   setChanged(username)
-  // }
   const handleChange = optionss => {
     setSelectedOptions(optionss)
     for (let i = 0; i < optionss.length; i++) {
@@ -207,11 +197,6 @@ function DisplayApplication(props) {
       console.log("Error")
     }
   }
-  function manageViewButtonFunction(appAcronym, appRnumber) {
-    sessionStorage.setItem("appRnumber", appRnumber)
-    sessionStorage.setItem("appAcronym", appAcronym)
-    navigate(`/application`)
-  }
 
   async function authUser(username, token) {
     const response = await Axios.post("http://localhost:8080/authUser", { username, token })
@@ -300,59 +285,56 @@ function DisplayApplication(props) {
           {message}
         </Alert>
       </Snackbar>
-
-      <TableContainer component={Paper}>
-        <Table className="table" aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              {/* <TableCell align="right">No.</TableCell> */}
-              <TableCell width={10} align="center" className="helen">
-                Application Name
-              </TableCell>
-              <TableCell width={10} align="center">
-                Description
-              </TableCell>
-              {/* <TableCell width={10} align="center">
-                Rnumber
-              </TableCell> */}
-
-              <TableCell width={10} align="center">
-                Action
-              </TableCell>
-              {/* <TableCell align="right">Protein&nbsp;(g)</TableCell> */}
-            </TableRow>
-          </TableHead>
-          {/* {data.map((item, index) => xxx)} */}
-          {/* {editUser == item.username && ( */}
-          <TableBody>
-            {data.map((item, index) => {
-              return (
-                <TableRow key={item.name}>
-                  {/* <TableCell align="center">{item.App_Acronym}</TableCell>
-                  <TableCell align="center">{item.App_Description}</TableCell>
-                  <TableCell align="center">{item.App_Rnumber}</TableCell> */}
-                  <TableCell align="center">{item.App_Acronym}</TableCell>
-                  <TableCell align="center">{item.App_Description}</TableCell>
-                  {/* <TableCell align="center">{item.App_Rnumber}</TableCell> */}
-                  <TableCell align="center">
-                    {/* <Button onClick={() => managerUserButtonFunction(item.username, item.email, item.password, item.groups, item.isactive)} variant="contained" size="small">
-                          Edit
-                        </Button> */}
-                    <Button onClick={() => manageApplicationButtonFunction(item)} variant="contained" size="small">
-                      Edit
-                    </Button>
-                    <Button onClick={() => manageViewButtonFunction(item.App_Acronym, item.App_Rnumber)} variant="contained" size="small">
-                      View
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {/* 
+      <Container style={{ marginTop: "1em" }} maxWidth="xl"> */}
+      {/* <Grid container spacing={0}> */}
+      {/* <Grid item container alignItems="center" xs={3}>
+            <Paper>
+              <Grid item xs={2} alignItems="center">
+                <Avatar>JD</Avatar>
+              </Grid>
+              <Grid item xs={6} alignItems="center">
+                John Doe
+              </Grid>
+            </Paper>
+          </Grid> */}
+      <Grid container spacing={0}>
+        <Grid item xs justifyContent="center" alignItems="center">
+          <Paper justifyContent="center" alignItems="center">
+            Open
+          </Paper>
+          <Card xs={{ maxWidth: 345 }}>
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                Lizard
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents except Antarctica
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="small">Sharez</Button>
+              <Button size="small">Learn More</Button>
+            </CardActions>
+          </Card>
+        </Grid>
+        <Grid item xs>
+          <Paper>To Do</Paper>
+        </Grid>
+        <Grid item xs>
+          <Paper>Doing</Paper>
+        </Grid>
+        <Grid item xs>
+          <Paper>Done</Paper>
+        </Grid>
+        <Grid item xs>
+          <Paper>Close</Paper>
+        </Grid>
+      </Grid>
+      {/* </Grid> */}
+      {/* </Container> */}
     </div>
   )
 }
 
-export default DisplayApplication
+export default TaskBoard

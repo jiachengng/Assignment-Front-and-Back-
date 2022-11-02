@@ -13,6 +13,7 @@ import DisplayUser from "./components/DisplayUser"
 import EditUser from "./components/EditUser"
 import DashBoard from "./components/DashBoard"
 import ManageUsers from "./components/ManageUsers"
+import Application from "./components/Application"
 
 function Main() {
   const [loggedIn, setLoggedIn] = useState()
@@ -29,6 +30,7 @@ function Main() {
         <Route path="/editUser" element={<EditUser />} />
         <Route path="/dashBoard" element={<DashBoard />} />
         <Route path="/manageUsers" element={<ManageUsers />} />
+        <Route path="/application" element={<Application />} />
       </Routes>
       <Footer />
     </BrowserRouter>

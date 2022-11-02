@@ -99,3 +99,55 @@ exports.createApplication = async (req, res, result) => {
     // result(null, { id: res.insertId, ...newAccount })
   })
 }
+
+exports.createTask = async (req, res, result) => {
+  console.log("Starting backend API: createTask()")
+  // Validate request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    })
+  }
+  var newTask = {
+    Task_id: req.body.taskId,
+    Task_name: req.body.taskName,
+    Task_description: req.body.taskDescription,
+    Task_notes: req.body.taskNotes,
+    Task_plan: null,
+    Task_app_Acronym: req.body.appAcronym,
+    Task_state: "open",
+    Task_creator: req.body.taskCreator,
+    Task_owner: req.body.taskCreator,
+    Task_createDate: new Date("2021-01-01")
+  }
+  console.log("creating task....")
+  sql.query("INSERT INTO task SET ?", newTask, (err, result) => {
+    if (err) {
+      console.log("other errror")
+      console.log(err)
+      if (err.code === "ER_DUP_ENTRY") {
+        console.log("DUP ENTRY")
+        res.status(200).send({
+          success: true,
+          message: "Task id already exist in Database"
+        })
+      }
+    } else {
+      console.log("else....")
+      console.log(result)
+      res.status(200).send({
+        success: true,
+        results: result.length,
+        // requestMethod: req.requestMethod,
+        data: result,
+        message: "Task Created",
+        newTask
+      })
+      // console.log(result)
+      console.log("created task: ", { id: res.insertId, ...newTask })
+      // console.log(success)
+    }
+    // console.log("created account: ", { id: res.insertId, ...newAccount })
+    // result(null, { id: res.insertId, ...newAccount })
+  })
+}

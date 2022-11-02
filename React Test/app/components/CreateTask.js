@@ -18,7 +18,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 const animatedComponents = makeAnimated()
 
-function CreateApplication(props) {
+function CreateTask(props) {
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [groupname, setGroupname] = useState()
@@ -32,16 +32,9 @@ function CreateApplication(props) {
   const [success, setSuccess] = React.useState()
   const [data2, setData2] = useState([])
 
-  const [appAcronym, setAppAcronym] = React.useState("")
-  const [appDescription, setAppDescription] = React.useState("")
-  const [appStartDate, setAppStartDate] = React.useState("")
-  const [appEndDate, setAppEndDate] = React.useState("")
-  const [appPermitOpen, setPermitOpen] = React.useState("")
-  const [appPermitToDoList, setPermitToDo] = React.useState("")
-  const [appPermitDoing, setPermitDoing] = React.useState("")
-  const [appPermitDone, setPermitDone] = React.useState("")
-  const [appPermitCreate, setPermitCreate] = React.useState("")
-  const [appRnumber, setAppRnumber] = React.useState("")
+  const [taskName, setTaskName] = React.useState("")
+  const [taskDescription, setTaskDescription] = React.useState("")
+  const [taskNotes, setTaskNotes] = React.useState("")
 
   const loadData2 = async () => {
     const response = await Axios.post("http://localhost:8080/getAllGroups")
@@ -95,13 +88,21 @@ function CreateApplication(props) {
   let subtitle
 
   async function submit(e) {
+    console.log("1")
     e.preventDefault()
-    const response = await Axios.post("http://localhost:8080/createApplication", { appAcronym, appDescription, appRnumber, appStartDate, appEndDate, appPermitOpen, appPermitToDoList, appPermitDoing, appPermitDone, appPermitCreate })
+    console.log("2")
+    var appAcronym = sessionStorage.getItem("appAcronym")
+    var appRnumber = sessionStorage.getItem("appRnumber")
+    var taskId = appAcronym + "_" + appRnumber
+    var taskCreator = sessionStorage.getItem("username")
+    console.log("3")
+    const response = await Axios.post("http://localhost:8080/createTask", { taskName, taskDescription, taskNotes, taskId, appRnumber, taskCreator, appAcronym })
+    console.log("4")
     // if (response.data) {
-    if (response.data.message == "Application Created") {
+    if (response.data.message == "Task Created") {
       setSuccess("success")
 
-      console.log("Application successfully created")
+      console.log("Task successfully created")
       console.log(response.data)
       props.onSubmit(count)
       setCount(count + 1)
@@ -152,61 +153,30 @@ function CreateApplication(props) {
       </Snackbar>
       <form>
         <Modal name="ReactModal__Overlay" isOpen={modalIsOpen} onAfterOpen={afterOpenModal} onRequestClose={closeModal} style={customStyles} contentLabel="Example Modal">
-          <h2 ref={_subtitle => (subtitle = _subtitle)}>Create Application</h2>
+          <h2 ref={_subtitle => (subtitle = _subtitle)}>Create Task</h2>
           {/* <div>Enter New Group Name!!!</div> */}
           {/* <button onClick={closeModal}>close</button> */}
           <form>
             <label htmlFor="username-register" className="text-muted mb-1">
-              App Name:
+              Application Name:
             </label>
-            <input style={{ marginLeft: "10px" }} onChange={e => setAppAcronym(e.target.value)} />
+            <input style={{ marginLeft: "10px" }} value={sessionStorage.getItem("appAcronym")} disabled />
+            <label htmlFor="username-register" className="text-muted mb-1">
+              Task Name:
+            </label>
+            <input style={{ marginLeft: "10px" }} onChange={e => setTaskName(e.target.value)} />
             <label style={{ marginLeft: "15px" }} htmlFor="username-register" className="text-muted mb-1">
               Description:
             </label>
-            <input style={{ marginLeft: "10px" }} onChange={e => setAppDescription(e.target.value)} />
+            <input style={{ marginLeft: "10px" }} onChange={e => setTaskDescription(e.target.value)} />
             <label style={{ marginLeft: "15px" }} htmlFor="username-register" className="text-muted mb-1">
-              R.no:
+              Task Notes:
             </label>
-            <input style={{ marginLeft: "10px" }} onChange={e => setAppRnumber(e.target.value)} />
+            <input style={{ marginLeft: "10px" }} onChange={e => setTaskNotes(e.target.value)} />
             <div>
               <br></br>
             </div>
-            <label htmlFor="username-register" className="text-muted mb-1">
-              Start:
-            </label>
-            <input onChange={e => setAppStartDate(e.target.value)} />
-            <label htmlFor="username-register" className="text-muted mb-1">
-              End:
-            </label>
-            <input onChange={e => setAppEndDate(e.target.value)} />
-            <br></br>
-            <label htmlFor="username-register" className="text-muted mb-1">
-              Permit Open:
-            </label>
-            {/* <input value={appPermitOpen} onChange={e => setPermitOpen(e.target.value)} /> */}
-            {/* <Select options={data2} onChange={e => setPermitOpen(e)} /> */}
-            <Select components={animatedComponents} options={data2} autosize={true} onChange={e => setPermitOpen(e.value)} />
-            <label htmlFor="username-register" className="text-muted mb-1">
-              Permit ToDo:
-            </label>
-            {/* <input value={appPermitToDoList} onChange={e => setPermitToDo(e.target.value)} /> */}
-            <Select components={animatedComponents} options={data2} autosize={true} onChange={e => setPermitToDo(e.value)} />
-            <label htmlFor="username-register" className="text-muted mb-1">
-              Permit Doing:
-            </label>
-            {/* <input value={appPermitDoing} onChange={e => setPermitDoing(e.target.value)} /> */}
-            <Select components={animatedComponents} options={data2} autosize={true} onChange={e => setPermitDoing(e.value)} />
-            <label htmlFor="username-register" className="text-muted mb-1">
-              Permit Done:
-            </label>
-            {/* <input value={appPermitDone} onChange={e => setPermitDone(e.target.value)} /> */}
-            <Select components={animatedComponents} options={data2} autosize={true} onChange={e => setPermitDone(e.value)} />
-            <label htmlFor="username-register" className="text-muted mb-1">
-              Permit Create:
-            </label>
-            <Select components={animatedComponents} options={data2} autosize={true} onChange={e => setPermitCreate(e.value)} />
-            {/* <input value={appPermitCreate} onChange={e => setPermitCreate(e.target.value)} /> */}
-            {/* <Select closeMenuOnSelect={false} components={animatedComponents} defaultValue={defaultGroupsCreate} isMulti options={data2} onChange={handleChange} /> */}
+
             <button onClick={submit}>Save</button>
           </form>
           <div>
@@ -216,10 +186,10 @@ function CreateApplication(props) {
         </Modal>
       </form>
       <button className="py-1 mt-2 btn btn-lg btn-warning btn-block" onClick={openModal}>
-        Create Application
+        + Create Task
       </button>
     </div>
   )
 }
 
-export default CreateApplication
+export default CreateTask

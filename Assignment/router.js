@@ -28,6 +28,7 @@ apiRouter.route("/getAllGroups").post(groupController.getAllGroups)
 apiRouter.route("/displayApplicationsDetails").post(applicationController.displayApplicationsDetails)
 apiRouter.route("/updateApplication").post(applicationController.updateApplication)
 apiRouter.route("/createApplication").post(applicationController.createApplication)
+apiRouter.route("/createTask").post(applicationController.createTask)
 //ROUTES TO CHECK ID WITH NAME
 // apiRouter.route("/findUsernameById").post(userController.findUsernameById)
 // apiRouter.route("/findIdByUsername").post(userController.findIdByUsername)
