@@ -20,6 +20,9 @@ import makeAnimated from "react-select/animated"
 import Snackbar from "@mui/material/Snackbar"
 import MuiAlert from "@mui/material/Alert"
 import Modal from "react-modal"
+import ReadMoreIcon from "@mui/icons-material/ReadMore"
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft"
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight"
 import { Card, CardActions, CardContent, CardMedia, Typography, Container, Grid, Avatar } from "@material-ui/core"
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -65,6 +68,19 @@ function TaskBoard(props) {
   const [appPermitCreate, setPermitCreate] = React.useState("")
   const [appRnumber, setAppRnumber] = React.useState("")
 
+  const [taskId, settaskId] = React.useState("")
+  const [taskName, settaskName] = React.useState("")
+  const [taskDescription, settaskDescription] = React.useState("")
+  const [taskNotes, setaskNotes] = React.useState("")
+  const [taskPlan, settaskPlan] = React.useState("")
+  const [taskAppAcronym, settaskAppAcronym] = React.useState("")
+  const [taskState, settaskState] = React.useState("")
+  const [taskCreator, settaskCreator] = React.useState("")
+  const [taskOwner, settaskOwner] = React.useState("")
+  const [taskCreateDate, settaskCreateDate] = React.useState("")
+
+  const [task, setTask] = React.useState()
+
   const customStyles = {
     content: {
       top: "50%",
@@ -97,7 +113,7 @@ function TaskBoard(props) {
 
   var array = []
   const loadData = async () => {
-    const response = await Axios.post("http://localhost:8080/displayApplicationsDetails")
+    const response = await Axios.post("http://localhost:8080/displayTaskDetails")
     setData(response.data)
     console.log(response.data)
     // const rows = response.data
@@ -134,51 +150,16 @@ function TaskBoard(props) {
   function manageApplicationButtonFunction(item) {
     // setGroupname()
     openModal()
-    setAppAcronym(item.App_Acronym)
-    setAppDescription(item.App_Description)
-    setAppStartDate(item.App_startDate.split("T")[0])
-    setAppEndDate(item.App_endDate.split("T")[0])
-    setPermitOpen(item.App_permit_Open)
-    setPermitToDo(item.App_permit_toDoList)
-    setPermitDoing(item.App_permit_Doing)
-    setPermitDone(item.App_permit_Done)
-    setPermitCreate(item.App_permit_Create)
-    setAppRnumber(item.App_Rnumber)
-
-    var options1 = []
-    var group1 = new Object()
-    group1.value = item.App_permit_Create
-    group1.label = item.App_permit_Create
-    options1.push(group1)
-    setDefaultGroupsCreate(options1)
-
-    var options2 = []
-    var group2 = new Object()
-    group2.value = item.App_permit_Open
-    group2.label = item.App_permit_Open
-    options2.push(group2)
-    setDefaultGroupsOpen(options2)
-
-    var options3 = []
-    var group3 = new Object()
-    group3.value = item.App_permit_toDoList
-    group3.label = item.App_permit_toDoList
-    options3.push(group3)
-    setDefaultGroupsToDo(options3)
-
-    var options4 = []
-    var group4 = new Object()
-    group4.value = item.App_permit_Doing
-    group4.label = item.App_permit_Doing
-    options4.push(group4)
-    setDefaultGroupsDoing(options4)
-
-    var options5 = []
-    var group5 = new Object()
-    group5.value = item.App_permit_Done
-    group5.label = item.App_permit_Done
-    options5.push(group5)
-    setDefaultGroupsDone(options5)
+    settaskId(item.Task_id)
+    settaskName(item.Task_name)
+    settaskDescription(item.Task_description)
+    setaskNotes(item.Task_notes)
+    settaskPlan(item.Task_plan)
+    settaskAppAcronym(item.Task_app_Acronym)
+    settaskState(item.Task_state)
+    settaskCreator(item.Task_creator)
+    settaskOwner(item.Task_owner)
+    settaskCreateDate(item.Task_createDate)
   }
 
   async function submit(e) {
@@ -218,60 +199,77 @@ function TaskBoard(props) {
   return (
     <div>
       <Modal name="ReactModal__Overlay" isOpen={modalIsOpen} onAfterOpen={afterOpenModal} onRequestClose={closeModal} style={customStyles} contentLabel="Example Modal">
-        <h2 ref={_subtitle => (subtitle = _subtitle)}>Edit Application</h2>
+        <h2 ref={_subtitle => (subtitle = _subtitle)}>Edit</h2>
         {/* <div>Enter New Group Name!!!</div> */}
         {/* <button onClick={closeModal}>close</button> */}
         <form>
-          <label htmlFor="username-register" className="text-muted mb-1">
-            App Name:
-          </label>
-          <input style={{ marginLeft: "10px" }} value={appAcronym} onChange={e => setAppAcronym(e.target.value)} />
-          <label style={{ marginLeft: "15px" }} htmlFor="username-register" className="text-muted mb-1">
-            Description:
-          </label>
-          <input style={{ marginLeft: "10px" }} value={appDescription} onChange={e => setAppDescription(e.target.value)} />
-          <label style={{ marginLeft: "15px" }} htmlFor="username-register" className="text-muted mb-1">
-            R.no:
-          </label>
-          <input style={{ marginLeft: "10px" }} value={appRnumber} onChange={e => setAppRnumber(e.target.value)} />
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task Id:
+            </label>
+            <input value={taskId} disabled style={{ display: "table-cell", marginLeft: "5px" }} />
+            <br />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task Name:
+            </label>
+            <input value={taskName} onChange={e => setTaskName(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <br />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Description:
+            </label>
+            <input value={taskDescription} onChange={e => setTaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <br />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task Notes:
+            </label>
+            <input value={taskNotes} onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <br />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task Plans:
+            </label>
+            <input value={taskPlan} onChange={e => settaskPlan(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <br />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task State:
+            </label>
+            <input value={taskState} onChange={e => settaskState(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <br />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task Creator:
+            </label>
+            <input value={taskCreator} onChange={e => settaskCreator(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <br />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task Owner:
+            </label>
+            <input value={taskOwner} onChange={e => settaskOwner(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <br />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task Create Date:
+            </label>
+            <input value={taskCreateDate.split("T")[0]} onChange={e => settaskCreateDate(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <br />
+          </p>
           <div>
             <br></br>
           </div>
-          <label htmlFor="username-register" className="text-muted mb-1">
-            Start:
-          </label>
-          <input value={appStartDate.split("T")[0]} onChange={e => setAppStartDate(e.target.value)} />
-          <label htmlFor="username-register" className="text-muted mb-1">
-            End:
-          </label>
-          <input value={appEndDate.split("T")[0]} onChange={e => setAppEndDate(e.target.value)} />
-          <br></br>
-          <label htmlFor="username-register" className="text-muted mb-1">
-            Permit Open:
-          </label>
-          {/* <input value={appPermitOpen} onChange={e => setPermitOpen(e.target.value)} /> */}
-          <Select components={animatedComponents} defaultValue={defaultGroupsOpen} options={data2} autosize={true} onChange={e => setPermitOpen(e.value)} />
-          <label htmlFor="username-register" className="text-muted mb-1">
-            Permit ToDo:
-          </label>
-          {/* <input value={appPermitToDoList} onChange={e => setPermitToDo(e.target.value)} /> */}
-          <Select components={animatedComponents} defaultValue={defaultGroupsToDo} options={data2} autosize={true} onChange={e => setPermitToDo(e.value)} />
-          <label htmlFor="username-register" className="text-muted mb-1">
-            Permit Doing:
-          </label>
-          {/* <input value={appPermitDoing} onChange={e => setPermitDoing(e.target.value)} /> */}
-          <Select components={animatedComponents} defaultValue={defaultGroupsDoing} options={data2} autosize={true} onChange={e => setPermitDoing(e.value)} />
-          <label htmlFor="username-register" className="text-muted mb-1">
-            Permit Done:
-          </label>
-          {/* <input value={appPermitDone} onChange={e => setPermitDone(e.target.value)} /> */}
-          <Select components={animatedComponents} defaultValue={defaultGroupsDone} options={data2} autosize={true} onChange={e => setPermitDone(e.value)} />
-          <label htmlFor="username-register" className="text-muted mb-1">
-            Permit Create:
-          </label>
-          <Select components={animatedComponents} defaultValue={defaultGroupsCreate} options={data2} autosize={true} onChange={e => setPermitCreate(e.value)} />
-          {/* <input value={appPermitCreate} onChange={e => setPermitCreate(e.target.value)} /> */}
-          {/* <Select closeMenuOnSelect={false} components={animatedComponents} defaultValue={defaultGroupsCreate} isMulti options={data2} onChange={handleChange} /> */}
+
           <button onClick={submit}>Save</button>
         </form>
         <div>
@@ -301,34 +299,199 @@ function TaskBoard(props) {
       <Grid container spacing={0}>
         <Grid item xs justifyContent="center" alignItems="center">
           <Paper justifyContent="center" alignItems="center">
-            Open
+            <div style={{ textAlign: "center" }}>
+              <strong>Open</strong>
+            </div>
           </Paper>
-          <Card xs={{ maxWidth: 345 }}>
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                Lizard
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents except Antarctica
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button size="small">Sharez</Button>
-              <Button size="small">Learn More</Button>
-            </CardActions>
-          </Card>
+          {data.map((item, index) => {
+            if (item.Task_state == "open" && item.Task_app_Acronym == sessionStorage.getItem("appAcronym")) {
+              return (
+                <Card xs={{ maxWidth: 345 }}>
+                  <CardContent style={{ padding: "0px", backgroundColor: "lightblue" }}>
+                    <Typography gutterBottom variant="body2" component="div">
+                      Task ID: {item.Task_id}
+                    </Typography>
+                  </CardContent>
+                  <CardContent>
+                    <Typography variant="body2" color="text.secondary">
+                      Task Name: {item.Task_name}
+                      <br />
+                      Owner: {item.Task_owner}
+                      {/* Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents except Antarctica */}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    {/* {false ? (
+                      <div>
+                        <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
+                        <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
+                      </div>
+                    ) : null} */}
+                    <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
+                    <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
+                    <Button onClick={() => manageApplicationButtonFunction(item)} variant="contained" size="small" startIcon={<ReadMoreIcon />}></Button>
+                  </CardActions>
+                </Card>
+              )
+            }
+          })}
         </Grid>
-        <Grid item xs>
-          <Paper>To Do</Paper>
+
+        <Grid item xs justifyContent="center" alignItems="center">
+          <Paper justifyContent="center" alignItems="center">
+            <div style={{ textAlign: "center" }}>
+              <strong>To Do</strong>
+            </div>
+          </Paper>
+          {data.map((item, index) => {
+            if (item.Task_state == "toDo" && item.Task_app_Acronym == sessionStorage.getItem("appAcronym")) {
+              return (
+                <Card xs={{ maxWidth: 345 }}>
+                  <CardContent style={{ padding: "0px", backgroundColor: "lightblue" }}>
+                    <Typography gutterBottom variant="body2" component="div">
+                      Task ID: {item.Task_id}
+                    </Typography>
+                  </CardContent>
+                  <CardContent>
+                    <Typography variant="body2" color="text.secondary">
+                      Task Name: {item.Task_name}
+                      <br />
+                      Owner: {item.Task_owner}
+                      {/* Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents except Antarctica */}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    {/* {false ? (
+                      <div>
+                        <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
+                        <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
+                      </div>
+                    ) : null} */}
+                    <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
+                    <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
+                    <Button onClick={() => manageApplicationButtonFunction(item)} variant="contained" size="small" startIcon={<ReadMoreIcon />}></Button>
+                  </CardActions>
+                </Card>
+              )
+            }
+          })}
         </Grid>
-        <Grid item xs>
-          <Paper>Doing</Paper>
+        <Grid item xs justifyContent="center" alignItems="center">
+          <Paper justifyContent="center" alignItems="center">
+            <div style={{ textAlign: "center" }}>
+              <strong>Doing</strong>
+            </div>
+          </Paper>
+          {data.map((item, index) => {
+            if (item.Task_state == "doing" && item.Task_app_Acronym == sessionStorage.getItem("appAcronym")) {
+              return (
+                <Card xs={{ maxWidth: 345 }}>
+                  <CardContent style={{ padding: "0px", backgroundColor: "lightblue" }}>
+                    <Typography gutterBottom variant="body2" component="div">
+                      Task ID: {item.Task_id}
+                    </Typography>
+                  </CardContent>
+                  <CardContent>
+                    <Typography variant="body2" color="text.secondary">
+                      Task Name: {item.Task_name}
+                      <br />
+                      Owner: {item.Task_owner}
+                      {/* Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents except Antarctica */}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    {/* {false ? (
+                      <div>
+                        <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
+                        <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
+                      </div>
+                    ) : null} */}
+                    <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
+                    <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
+                    <Button onClick={() => manageApplicationButtonFunction(item)} variant="contained" size="small" startIcon={<ReadMoreIcon />}></Button>
+                  </CardActions>
+                </Card>
+              )
+            }
+          })}
         </Grid>
-        <Grid item xs>
-          <Paper>Done</Paper>
+        <Grid item xs justifyContent="center" alignItems="center">
+          <Paper justifyContent="center" alignItems="center">
+            <div style={{ textAlign: "center" }}>
+              <strong>Done</strong>
+            </div>
+          </Paper>
+          {data.map((item, index) => {
+            if (item.Task_state == "done" && item.Task_app_Acronym == sessionStorage.getItem("appAcronym")) {
+              return (
+                <Card xs={{ maxWidth: 345 }}>
+                  <CardContent style={{ padding: "0px", backgroundColor: "lightblue" }}>
+                    <Typography gutterBottom variant="body2" component="div">
+                      Task ID: {item.Task_id}
+                    </Typography>
+                  </CardContent>
+                  <CardContent>
+                    <Typography variant="body2" color="text.secondary">
+                      Task Name: {item.Task_name}
+                      <br />
+                      Owner: {item.Task_owner}
+                      {/* Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents except Antarctica */}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    {/* {false ? (
+                      <div>
+                        <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
+                        <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
+                      </div>
+                    ) : null} */}
+                    <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
+                    <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
+                    <Button onClick={() => manageApplicationButtonFunction(item)} variant="contained" size="small" startIcon={<ReadMoreIcon />}></Button>
+                  </CardActions>
+                </Card>
+              )
+            }
+          })}
         </Grid>
-        <Grid item xs>
-          <Paper>Close</Paper>
+        <Grid item xs justifyContent="center" alignItems="center">
+          <Paper justifyContent="center" alignItems="center">
+            <div style={{ textAlign: "center" }}>
+              <strong>Close</strong>
+            </div>
+          </Paper>
+          {data.map((item, index) => {
+            if (item.Task_state == "close" && item.Task_app_Acronym == sessionStorage.getItem("appAcronym")) {
+              return (
+                <Card xs={{ maxWidth: 345 }}>
+                  <CardContent style={{ padding: "0px", backgroundColor: "lightblue" }}>
+                    <Typography gutterBottom variant="body2" component="div">
+                      Task ID: {item.Task_id}
+                    </Typography>
+                  </CardContent>
+                  <CardContent>
+                    <Typography variant="body2" color="text.secondary">
+                      Task Name: {item.Task_name}
+                      <br />
+                      Owner: {item.Task_owner}
+                      {/* Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging across all continents except Antarctica */}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    {/* {false ? (
+                      <div>
+                        <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
+                        <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
+                      </div>
+                    ) : null} */}
+                    <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
+                    <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
+                    <Button onClick={() => manageApplicationButtonFunction(item)} variant="contained" size="small" startIcon={<ReadMoreIcon />}></Button>
+                  </CardActions>
+                </Card>
+              )
+            }
+          })}
         </Grid>
       </Grid>
       {/* </Grid> */}

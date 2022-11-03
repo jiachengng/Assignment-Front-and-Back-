@@ -18,7 +18,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 const animatedComponents = makeAnimated()
 
-function CreateTask(props) {
+function CreatePlan(props) {
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [groupname, setGroupname] = useState()
@@ -36,8 +36,12 @@ function CreateTask(props) {
   const [taskDescription, setTaskDescription] = React.useState("")
   const [taskNotes, setTaskNotes] = React.useState("")
 
+  const [planName, setPlanName] = React.useState("")
+  const [planStartDate, setPlanStartDate] = React.useState("")
+  const [planEndDate, setPlanEndDate] = React.useState("")
+
   const loadData2 = async () => {
-    const response = await Axios.post("http://localhost:8080/getAllGroups")
+    const response = await Axios.post("http://localhost:8080/displayPlanDetails")
     setData2(response.data.data)
   }
 
@@ -57,7 +61,7 @@ function CreateTask(props) {
 
   //==========================
   const loadData = async () => {
-    const response = await Axios.get("http://localhost:8080/displayUserDetails")
+    const response = await Axios.get("http://localhost:8080/displayPlanDetails")
     // const rows = response.data
     // console.log("HELLO")
   }
@@ -82,23 +86,11 @@ function CreateTask(props) {
   let subtitle
 
   async function submit(e) {
-    console.log("1")
     e.preventDefault()
-    console.log("2")
     var appAcronym = sessionStorage.getItem("appAcronym")
-    const response2 = await Axios.post("http://localhost:8080/getAppRnumber", { appAcronym })
-    // var appRnumber = sessionStorage.getItem("appRnumber")
-    var appRnumber = response2.data[0].App_Rnumber
-    console.log("Rnumber: ")
-    console.log(appRnumber)
-    var newAppRnumber = parseInt(appRnumber) + 1
-    var taskId = appAcronym + "_" + newAppRnumber
-    var taskCreator = sessionStorage.getItem("username")
-    console.log("3")
-    const response = await Axios.post("http://localhost:8080/createTask", { taskName, taskDescription, taskNotes, taskId, appRnumber, taskCreator, appAcronym, newAppRnumber })
-    console.log("4")
+    const response = await Axios.post("http://localhost:8080/createPlan", { planName, planStartDate, planEndDate, appAcronym })
     // if (response.data) {
-    if (response.data.message == "Task Created") {
+    if (response.data.message == "Plan Created") {
       setSuccess("success")
 
       console.log("Task successfully created")
@@ -152,7 +144,7 @@ function CreateTask(props) {
       </Snackbar>
       <form>
         <Modal name="ReactModal__Overlay" isOpen={modalIsOpen} onAfterOpen={afterOpenModal} onRequestClose={closeModal} style={customStyles} contentLabel="Example Modal">
-          <h2 ref={_subtitle => (subtitle = _subtitle)}>Create Task</h2>
+          <h2 ref={_subtitle => (subtitle = _subtitle)}>Create Plan</h2>
           {/* <div>Enter New Group Name!!!</div> */}
           {/* <button onClick={closeModal}>close</button> */}
           <form>
@@ -165,23 +157,23 @@ function CreateTask(props) {
             </p>
             <p style={{ display: "table-row" }}>
               <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-                Task Name:
+                Plan Name:
               </label>
-              <input onChange={e => setTaskName(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <input onChange={e => setPlanName(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
               <br />
             </p>
             <p style={{ display: "table-row" }}>
               <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-                Description:
+                Start Date:
               </label>
-              <input onChange={e => setTaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <input onChange={e => setPlanStartDate(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
               <br />
             </p>
             <p style={{ display: "table-row" }}>
               <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-                Task Notes:
+                End Date:
               </label>
-              <input onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <input onChange={e => setPlanEndDate(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
               <br />
             </p>
             <div>
@@ -196,11 +188,11 @@ function CreateTask(props) {
           <button onClick={closeModal}>close</button>
         </Modal>
       </form>
-      <button className="py-1 mt-2 btn btn-lg btn-warning btn-block" onClick={openModal}>
-        + Create Task
+      <button className="py-1 mt-2 btn btn-lg btn-info btn-block" onClick={openModal}>
+        + Create Plan
       </button>
     </div>
   )
 }
 
-export default CreateTask
+export default CreatePlan

@@ -29,6 +29,11 @@ apiRouter.route("/displayApplicationsDetails").post(applicationController.displa
 apiRouter.route("/updateApplication").post(applicationController.updateApplication)
 apiRouter.route("/createApplication").post(applicationController.createApplication)
 apiRouter.route("/createTask").post(applicationController.createTask)
+apiRouter.route("/displayTaskDetails").post(applicationController.displayTaskDetails)
+apiRouter.route("/getAppRnumber").post(applicationController.getAppRnumber)
+apiRouter.route("/createPlan").post(applicationController.createPlan)
+apiRouter.route("/displayPlanDetails").post(applicationController.displayPlanDetails)
+
 //ROUTES TO CHECK ID WITH NAME
 // apiRouter.route("/findUsernameById").post(userController.findUsernameById)
 // apiRouter.route("/findIdByUsername").post(userController.findIdByUsername)

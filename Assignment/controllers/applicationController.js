@@ -135,6 +135,7 @@ exports.createTask = async (req, res, result) => {
     } else {
       console.log("else....")
       console.log(result)
+      sql.query(`UPDATE application SET App_Rnumber = '${req.body.newAppRnumber}' WHERE App_Acronym = '${req.body.appAcronym}'`, (err, result) => {})
       res.status(200).send({
         success: true,
         results: result.length,
@@ -149,5 +150,126 @@ exports.createTask = async (req, res, result) => {
     }
     // console.log("created account: ", { id: res.insertId, ...newAccount })
     // result(null, { id: res.insertId, ...newAccount })
+  })
+}
+
+exports.displayTaskDetails = async (req, res) => {
+  // Validate request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    })
+  }
+  // sql.query(`SELECT * FROM user`, async (err, result) => {
+  sql.query(`SELECT * FROM task`, async (err, result) => {
+    if (err) {
+      console.log("error: ", err)
+      res.send("Unable to get results")
+      return
+    } else {
+      // if (result.length === 1) {
+      //   console.log("User details: ", result[0])
+      // } else {
+      //   console.log("Error")
+      // }
+      res.send(result)
+      console.log(result)
+      console.log("============================")
+    }
+  })
+}
+
+exports.getAppRnumber = async (req, res) => {
+  // Validate request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    })
+  }
+  // sql.query(`SELECT * FROM user`, async (err, result) => {
+  sql.query(`SELECT App_Rnumber FROM application WHERE App_Acronym = '${req.body.appAcronym}'`, async (err, result) => {
+    if (err) {
+      console.log("error: ", err)
+      res.send("Unable to get results")
+      return
+    } else {
+      // if (result.length === 1) {
+      //   console.log("User details: ", result[0])
+      // } else {
+      //   console.log("Error")
+      // }
+      res.send(result)
+      console.log(result)
+      console.log("============================")
+    }
+  })
+}
+exports.createPlan = async (req, res, result) => {
+  // Validate request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    })
+  }
+  var newPlan = {
+    Plan_MVP_name: req.body.planName,
+    Plan_startDate: req.body.planStartDate,
+    Plan_endDate: req.body.planEndDate,
+    Plan_app_Acronym: req.body.appAcronym
+  }
+  sql.query("INSERT INTO plan SET ?", newPlan, (err, result) => {
+    if (err) {
+      if (err.code === "ER_DUP_ENTRY") {
+        res.status(200).send({
+          success: true,
+          message: "Plan name already exist in Database"
+        })
+      }
+    } else {
+      console.log(result)
+      res.status(200).send({
+        success: true,
+        results: result.length,
+        // requestMethod: req.requestMethod,
+        data: result,
+        message: "Plan Created",
+        newPlan
+      })
+      // console.log(result)
+      console.log("created plan: ", { id: res.insertId, ...newPlan })
+      // console.log(success)
+    }
+    // console.log("created account: ", { id: res.insertId, ...newAccount })
+    // result(null, { id: res.insertId, ...newAccount })
+  })
+}
+exports.displayPlanDetails = async (req, res) => {
+  console.log("=============================================")
+  console.log("1")
+  // Validate request
+  if (!req.body) {
+    console.log("2")
+    res.status(400).send({
+      message: "Content can not be empty!"
+    })
+  }
+  // sql.query(`SELECT * FROM user`, async (err, result) => {
+  sql.query(`SELECT * FROM plan`, async (err, result) => {
+    if (err) {
+      console.log("3")
+      console.log("error: ", err)
+      res.send("Unable to get results")
+      return
+    } else {
+      console.log("4")
+      // if (result.length === 1) {
+      //   console.log("User details: ", result[0])
+      // } else {
+      //   console.log("Error")
+      // }
+      res.send(result)
+      console.log(result)
+      console.log("============================")
+    }
   })
 }

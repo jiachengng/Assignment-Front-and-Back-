@@ -9,6 +9,8 @@ import DisplayUser from "./DisplayUser"
 import HeaderAdmin from "./HeaderAdmin"
 import Taskboard from "./Taskboard"
 import CreateTask from "./CreateTask"
+import CreatePlan from "./CreatePlan"
+import { Card, CardActions, CardContent, CardMedia, Typography, Container, Grid, Avatar } from "@material-ui/core"
 
 function Application() {
   const [username, setUsername] = useState()
@@ -19,6 +21,8 @@ function Application() {
   const [isAdmin, setisAdmin] = useState()
   const [users, setUsers] = useState(false)
 
+  const [data, setData] = useState([])
+
   // const [data, setData] = useState([])
 
   // const loadData = async () => {
@@ -27,6 +31,11 @@ function Application() {
   //   // const rows = response.data
   //   // console.log("HELLO")
   // }
+  const loadData = async () => {
+    const response = await Axios.post("http://localhost:8080/displayPlanDetails")
+    setData(response.data)
+  }
+
   function handleSubmit(newUser) {
     console.log("supposedly count: " + newUser)
     setUsers(newUser)
@@ -64,7 +73,7 @@ function Application() {
     const username = sessionStorage.getItem("username")
     const token = sessionStorage.getItem("token")
     authUser(username, token)
-    // loadData()
+    loadData()
   }, [])
 
   return (
@@ -74,10 +83,25 @@ function Application() {
         <div className="row">
           <div className="col-lg-9 py-3 py-md-5 py-lg-2">
             {/* <div> */}
-            <Taskboard />
+            <Taskboard users={users} onSubmit={handleSubmit} />
           </div>
           <div className="col-lg-3 pl-lg-5 py-3 py-md-5 pb-3 py-lg-1">
             <CreateTask onSubmit={handleSubmit} />
+            <CreatePlan onSubmit={handleSubmit} />
+            {console.log(data)}
+            {data.map((item, index) => {
+              if (item.Plan_app_Acronym == sessionStorage.getItem("appAcronym")) {
+                return (
+                  <Card xs={{ maxWidth: 345 }}>
+                    <CardContent style={{ padding: "0px", backgroundColor: "lightblue" }}>
+                      <Typography gutterBottom variant="body2" component="div">
+                        Plan ID: {item.Plan_MVP_name}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                )
+              }
+            })}
           </div>
         </div>
       </Page>
