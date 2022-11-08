@@ -19,7 +19,7 @@ function Application() {
   const navigate = useNavigate()
   const [loggedIn, setLoggedIn] = useState()
   const [isAdmin, setisAdmin] = useState()
-  const [users, setUsers] = useState(false)
+  const [change, setChange] = useState(false)
 
   const [data, setData] = useState([])
 
@@ -38,7 +38,7 @@ function Application() {
 
   function handleSubmit(newUser) {
     console.log("supposedly count: " + newUser)
-    setUsers(newUser)
+    setChange(newUser)
   }
 
   //const response = await Axios.post("http://localhost:8080/authUser", { username, token })
@@ -74,7 +74,7 @@ function Application() {
     const token = sessionStorage.getItem("token")
     authUser(username, token)
     loadData()
-  }, [])
+  }, [change])
 
   return (
     <div>
@@ -83,9 +83,11 @@ function Application() {
         <div className="row">
           <div className="col-lg-9 py-3 py-md-5 py-lg-2">
             {/* <div> */}
-            <Taskboard users={users} onSubmit={handleSubmit} />
+            <Taskboard change={change} onSubmit={handleSubmit} />
           </div>
           <div className="col-lg-3 pl-lg-5 py-3 py-md-5 pb-3 py-lg-1">
+            {/* aa={sessionStorage.getItem("appAcronym") */}
+            {/* props.aa */}
             <CreateTask onSubmit={handleSubmit} />
             <CreatePlan onSubmit={handleSubmit} />
             {console.log(data)}
@@ -93,7 +95,7 @@ function Application() {
               if (item.Plan_app_Acronym == sessionStorage.getItem("appAcronym")) {
                 return (
                   <Card xs={{ maxWidth: 345 }}>
-                    <CardContent style={{ padding: "0px", backgroundColor: "lightblue" }}>
+                    <CardContent style={{ padding: "0px", backgroundColor: item.Plan_color }}>
                       <Typography gutterBottom variant="body2" component="div">
                         Plan ID: {item.Plan_MVP_name}
                       </Typography>

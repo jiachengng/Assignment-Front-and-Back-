@@ -30,11 +30,13 @@ function CreateTask(props) {
   const [open, setOpen] = React.useState(false)
   const [message, setMessage] = React.useState("Default")
   const [success, setSuccess] = React.useState()
+  const [data, setData] = useState([])
   const [data2, setData2] = useState([])
 
   const [taskName, setTaskName] = React.useState("")
   const [taskDescription, setTaskDescription] = React.useState("")
   const [taskNotes, setTaskNotes] = React.useState("")
+  const [plan, setPlan] = React.useState("")
 
   const loadData2 = async () => {
     const response = await Axios.post("http://localhost:8080/getAllGroups")
@@ -57,7 +59,11 @@ function CreateTask(props) {
 
   //==========================
   const loadData = async () => {
-    const response = await Axios.get("http://localhost:8080/displayUserDetails")
+    var appAcronym = sessionStorage.getItem("appAcronym")
+    const response = await Axios.post("http://localhost:8080/displayPlanDetails2", { appAcronym })
+    console.log("displaying group array: !!!")
+    console.log(response.data.data)
+    setData(response.data.data)
     // const rows = response.data
     // console.log("HELLO")
   }
@@ -86,6 +92,7 @@ function CreateTask(props) {
     e.preventDefault()
     console.log("2")
     var appAcronym = sessionStorage.getItem("appAcronym")
+    // var appAcronym = sessionStorage.getItem("appAcronym")
     const response2 = await Axios.post("http://localhost:8080/getAppRnumber", { appAcronym })
     // var appRnumber = sessionStorage.getItem("appRnumber")
     var appRnumber = response2.data[0].App_Rnumber
@@ -95,7 +102,7 @@ function CreateTask(props) {
     var taskId = appAcronym + "_" + newAppRnumber
     var taskCreator = sessionStorage.getItem("username")
     console.log("3")
-    const response = await Axios.post("http://localhost:8080/createTask", { taskName, taskDescription, taskNotes, taskId, appRnumber, taskCreator, appAcronym, newAppRnumber })
+    const response = await Axios.post("http://localhost:8080/createTask", { taskName, taskDescription, taskNotes, taskId, appRnumber, taskCreator, appAcronym, newAppRnumber, plan })
     console.log("4")
     // if (response.data) {
     if (response.data.message == "Task Created") {
@@ -138,8 +145,8 @@ function CreateTask(props) {
     setOpen(true)
   }
   useEffect(() => {
-    loadData2()
-  }, [props.users])
+    loadData2(), loadData()
+  }, [])
   // props.onSubmit(count)
   // setCount(count + 1)
   //testing
@@ -175,6 +182,14 @@ function CreateTask(props) {
                 Description:
               </label>
               <input onChange={e => setTaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <br />
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Plan:
+              </label>
+              {/* <input onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+              <Select components={animatedComponents} options={data} autosize={true} onChange={e => setPlan(e.value)} />
               <br />
             </p>
             <p style={{ display: "table-row" }}>

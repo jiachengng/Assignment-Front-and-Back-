@@ -33,6 +33,12 @@ apiRouter.route("/displayTaskDetails").post(applicationController.displayTaskDet
 apiRouter.route("/getAppRnumber").post(applicationController.getAppRnumber)
 apiRouter.route("/createPlan").post(applicationController.createPlan)
 apiRouter.route("/displayPlanDetails").post(applicationController.displayPlanDetails)
+apiRouter.route("/displayPlanDetails2").post(applicationController.displayPlanDetails2)
+apiRouter.route("/displayPlanDetails3").post(applicationController.displayPlanDetails3)
+
+apiRouter.route("/updateTask").post(applicationController.updateTask)
+apiRouter.route("/updateTask2").post(applicationController.updateTask2)
+apiRouter.route("/getPlanColor").post(applicationController.getPlanColor)
 
 //ROUTES TO CHECK ID WITH NAME
 // apiRouter.route("/findUsernameById").post(userController.findUsernameById)

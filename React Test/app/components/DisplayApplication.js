@@ -30,6 +30,7 @@ const animatedComponents = makeAnimated()
 function DisplayApplication(props) {
   const [data, setData] = useState([])
   const [data2, setData2] = useState([])
+  const [data3, setData3] = useState([])
   const [selectedOptions, setSelectedOptions] = useState([])
   const [defaultGroupsCreate, setDefaultGroupsCreate] = useState([])
   const [defaultGroupsOpen, setDefaultGroupsOpen] = useState([])
@@ -127,6 +128,16 @@ function DisplayApplication(props) {
   const loadData2 = async () => {
     const response = await Axios.post("http://localhost:8080/getAllGroups")
     setData2(response.data.data)
+  }
+
+  const loadData3 = async () => {
+    var appAcronym = sessionStorage.getItem("appAcronym")
+    const response = await Axios.post("http://localhost:8080/displayPlanDetails2", { appAcronym })
+    console.log("displaying group array: !!!")
+    console.log(response.data.data)
+    setData3(response.data.data)
+    // const rows = response.data
+    // console.log("HELLO")
   }
   function openModal() {
     setIsOpen(true)

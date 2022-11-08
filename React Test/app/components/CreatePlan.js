@@ -11,6 +11,7 @@ import Snackbar from "@mui/material/Snackbar"
 import MuiAlert from "@mui/material/Alert"
 import Select from "react-select"
 import makeAnimated from "react-select/animated"
+import { BlockPicker } from "react-color"
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -39,6 +40,7 @@ function CreatePlan(props) {
   const [planName, setPlanName] = React.useState("")
   const [planStartDate, setPlanStartDate] = React.useState("")
   const [planEndDate, setPlanEndDate] = React.useState("")
+  const [appColor, setAppColor] = useState("#37d67a")
 
   const loadData2 = async () => {
     const response = await Axios.post("http://localhost:8080/displayPlanDetails")
@@ -72,6 +74,10 @@ function CreatePlan(props) {
     }
   }
 
+  // function hndleChange() {} color => {
+  //   this.setState({ color: color.rgb })
+  // }
+
   function openModal() {
     setIsOpen(true)
   }
@@ -88,16 +94,20 @@ function CreatePlan(props) {
   async function submit(e) {
     e.preventDefault()
     var appAcronym = sessionStorage.getItem("appAcronym")
-    const response = await Axios.post("http://localhost:8080/createPlan", { planName, planStartDate, planEndDate, appAcronym })
+    const response = await Axios.post("http://localhost:8080/createPlan", { planName, planStartDate, planEndDate, appAcronym, appColor })
+    console.log("COLOR:")
+    console.log(appColor)
     // if (response.data) {
     if (response.data.message == "Plan Created") {
       setSuccess("success")
 
-      console.log("Task successfully created")
+      console.log("Plan successfully created")
       console.log(response.data)
-      props.onSubmit(count)
+
+      props.onSubmit(response)
       setCount(count + 1)
       closeModal()
+
       // setMessage(response.data.message)
       // setOpen(true)
     } else {
@@ -131,7 +141,7 @@ function CreatePlan(props) {
   }
   useEffect(() => {
     loadData2()
-  }, [props.users])
+  }, [])
   // props.onSubmit(count)
   // setCount(count + 1)
   //testing
@@ -176,9 +186,19 @@ function CreatePlan(props) {
               <input onChange={e => setPlanEndDate(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
               <br />
             </p>
-            <div>
-              <br></br>
-            </div>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Color:
+              </label>
+              <BlockPicker
+                color={appColor}
+                onChange={color => {
+                  setAppColor(color.hex)
+                }}
+              />
+              <br />
+            </p>
+            <div></div>
 
             <button onClick={submit}>Save</button>
           </form>
