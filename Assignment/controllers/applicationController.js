@@ -1,5 +1,6 @@
 const sql = require("../config/database")
 const e = require("express")
+const { sendEmail, getEmail } = require("../sendEmail")
 
 exports.displayApplicationsDetails = async (req, res) => {
   // Validate request
@@ -54,6 +55,42 @@ exports.displayApplicationsDetails2 = async (req, res) => {
 }
 
 exports.updateApplication = async (req, res) => {
+  if (req.body.appAcronym == "" || req.body.appAcronym == null) {
+    return res.status(200).send({
+      success: false,
+      message: "Application Name cannot be empty"
+    })
+  }
+  if (req.body.appDescription == "" || req.body.appDescription == null) {
+    return res.status(200).send({
+      success: false,
+      message: "Description cannot be empty"
+    })
+  }
+  if (req.body.appStartDate == "" || req.body.appStartDate == null) {
+    return res.status(200).send({
+      success: false,
+      message: "Start Date cannot be empty"
+    })
+  }
+  if (req.body.appEndDate == "" || req.body.appEndDate == null) {
+    return res.status(200).send({
+      success: false,
+      message: "End Date cannot be empty"
+    })
+  }
+  if (req.body.appPermitOpen == "" || req.body.appPermitOpen == null || req.body.appPermitToDoList == "" || req.body.appPermitToDoList == null || req.body.appPermitDone == "" || req.body.appPermitDone == null || req.body.appPermitCreate == "" || req.body.appPermitCreate == null) {
+    return res.status(200).send({
+      success: false,
+      message: "Please select all permission"
+    })
+  }
+  if (req.body.appRnumber == "" || req.body.appRnumber == null) {
+    return res.status(200).send({
+      success: false,
+      message: "R number cannot be empty"
+    })
+  }
   console.log("Running: " + "updateApplication")
   console.log("App name: " + req.body.appAcronym)
   console.log("Description: " + req.body.appDescription)
@@ -87,6 +124,42 @@ exports.createApplication = async (req, res, result) => {
       message: "Content can not be empty!"
     })
   }
+  if (req.body.appAcronym == "" || req.body.appAcronym == null) {
+    return res.status(200).send({
+      success: false,
+      message: "Application Name cannot be empty"
+    })
+  }
+  if (req.body.appDescription == "" || req.body.appDescription == null) {
+    return res.status(200).send({
+      success: false,
+      message: "Description cannot be empty"
+    })
+  }
+  if (req.body.appStartDate == "" || req.body.appStartDate == null) {
+    return res.status(200).send({
+      success: false,
+      message: "Start Date cannot be empty"
+    })
+  }
+  if (req.body.appEndDate == "" || req.body.appEndDate == null) {
+    return res.status(200).send({
+      success: false,
+      message: "End Date cannot be empty"
+    })
+  }
+  if (req.body.appPermitOpen == "" || req.body.appPermitOpen == null || req.body.appPermitToDoList == "" || req.body.appPermitToDoList == null || req.body.appPermitDone == "" || req.body.appPermitDone == null || req.body.appPermitCreate == "" || req.body.appPermitCreate == null) {
+    return res.status(200).send({
+      success: false,
+      message: "Please select all permission"
+    })
+  }
+  if (req.body.appRnumber == "" || req.body.appRnumber == null) {
+    return res.status(200).send({
+      success: false,
+      message: "R number cannot be empty"
+    })
+  }
   var newApplication = {
     App_Acronym: req.body.appAcronym,
     App_Description: req.body.appDescription,
@@ -95,7 +168,7 @@ exports.createApplication = async (req, res, result) => {
     App_permit_Open: req.body.appPermitOpen,
     App_permit_toDoList: req.body.appPermitToDoList,
     App_permit_Doing: req.body.appPermitDoing,
-    App_permit_Done: req.body.appPermitDoing,
+    App_permit_Done: req.body.appPermitDone,
     App_permit_Create: req.body.appPermitCreate,
     App_Rnumber: req.body.appRnumber
   }
@@ -132,6 +205,18 @@ exports.createTask = async (req, res, result) => {
   if (!req.body) {
     res.status(400).send({
       message: "Content can not be empty!"
+    })
+  }
+  if (req.body.taskName == "" || req.body.taskName == null) {
+    return res.status(200).send({
+      success: false,
+      message: "Task Name cannot be empty"
+    })
+  }
+  if (req.body.taskDescription == "" || req.body.taskDescription == null) {
+    return res.status(200).send({
+      success: false,
+      message: "Description cannot be empty"
     })
   }
   var m = new Date()
@@ -433,22 +518,54 @@ exports.updateTask = async (req, res) => {
 }
 
 exports.updateTask2 = async (req, res) => {
+  var newState = ""
+
   console.log("Update Task Inputs: ")
-  console.log("State: " + req.body.newState)
+  // console.log("State: " + req.body.newState)
+  console.log("State: " + newState)
   console.log("TaskId: " + req.body.taskid)
   var m = new Date()
   var dateString = m.getUTCFullYear() + "/" + ("0" + (m.getUTCMonth() + 1)).slice(-2) + "/" + ("0" + m.getUTCDate()).slice(-2) + " " + ("0" + m.getUTCHours()).slice(-2) + ":" + ("0" + m.getUTCMinutes()).slice(-2) + ":" + ("0" + m.getUTCSeconds()).slice(-2)
   var taskNote = req.body.taskNotes
   if (req.body.movement == "shiftRight") {
-    var newNote = "[" + req.body.userName + "] promoted the task from: " + req.body.initialState + " to " + req.body.newState + " [" + dateString + "]"
+    if (req.body.initialState == "open") {
+      newState = "toDo"
+    } else if (req.body.initialState == "toDo") {
+      newState = "doing"
+    } else if (req.body.initialState == "doing") {
+      newState = "done"
+    } else if (req.body.initialState == "done") {
+      newState = "close"
+    } else {
+      newState = req.body.initialState
+    }
+    var newNote = "[" + req.body.userName + "] promoted the task from: " + req.body.initialState + " to " + newState + " [" + dateString + "]"
   }
   if (req.body.movement == "shiftLeft") {
-    var newNote = "[" + req.body.userName + "] demoted the task from: " + req.body.initialState + " to " + req.body.newState + " [" + dateString + "]"
+    if (req.body.initialState == "toDo") {
+      newState = "open"
+    } else if (req.body.initialState == "doing") {
+      newState = "toDo"
+    } else if (req.body.initialState == "done") {
+      newState = "doing"
+    } else if (req.body.initialState == "close") {
+      newState = "done"
+    } else {
+      newState = req.body.initialState
+    }
+    var newNote = "[" + req.body.userName + "] demoted the task from: " + req.body.initialState + " to " + newState + " [" + dateString + "]"
   }
   // var newNote = "[" + req.body.userName + "] demoted the task from: " + req.body.initialState + " to " + newState + " [" + dateString + "]"
   taskNote = newNote + "\n" + taskNote
 
-  sql.query(`UPDATE task SET Task_state = '${req.body.newState}', Task_notes='${taskNote}' WHERE Task_id = '${req.body.taskid}'`, async (err, result) => {
+  if (newState == "done") {
+    var emailList = await getEmail("pl")
+    var msg = `Project lead, \n \n [TaskID]${req.body.taskid} from [Application]${req.body.taskAppAcronym} has been promoted from DOING to DONE state \n\n System generated message, do not reply`
+    sendEmail(emailList[0], msg)
+    sendEmail(emailList[1], msg)
+  }
+
+  sql.query(`UPDATE task SET Task_state = '${newState}', Task_notes='${taskNote}' WHERE Task_id = '${req.body.taskid}'`, async (err, result) => {
     if (err) {
       console.log("1111111111111")
       console.log("error: ", err)

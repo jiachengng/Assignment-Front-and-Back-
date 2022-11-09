@@ -69,7 +69,7 @@ function EditUser() {
   //   setEmail(response.email)
   // }
   async function authUser(username, token) {
-    const response = await Axios.post("http://localhost:8080/authUser", { username, token })
+    const response = await Axios.post("http://localhost:8080/authUser2", { username, token })
     setLoggedIn(response.data.login)
     setisAdmin(response.data.isAdmin)
     console.log("printing is login and is admin")

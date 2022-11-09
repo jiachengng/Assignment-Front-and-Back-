@@ -68,6 +68,7 @@ function TaskBoard(props) {
   const [onChanged, setOnChanged] = React.useState(false)
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [modalIsOpen2, setIsOpen2] = React.useState(false)
+  const [adjustPlan, setAdjustPlan] = React.useState(true)
 
   const [appAcronym, setAppAcronym] = React.useState("")
   const [appDescription, setAppDescription] = React.useState("")
@@ -227,11 +228,11 @@ function TaskBoard(props) {
       y = isPermitCreate
     }
 
-    if (y == true) {
-      openModal()
-    } else {
-      openModal2()
-    }
+    // if (y == true) {
+    //   openModal()
+    // } else {
+    //   openModal2()
+    // }
 
     settaskId(item.Task_id)
     settaskName(item.Task_name)
@@ -249,6 +250,22 @@ function TaskBoard(props) {
     settaskCreator(item.Task_creator)
     settaskOwner(item.Task_owner)
     settaskCreateDate(item.Task_createDate)
+
+    console.log("TASK STATE: ")
+    console.log(item.Task_state)
+
+    if (item.Task_state == "toDo" || item.Task_state == "doing" || item.Task_state == "close") {
+      setAdjustPlan(false)
+      console.log("Finish")
+    } else {
+      setAdjustPlan(true)
+    }
+
+    if (y == true) {
+      openModal()
+    } else {
+      openModal2()
+    }
   }
   function getPlanColor(taskPlanColor) {
     // const response = await Axios.post("http://localhost:8080/getPlanColor", { taskPlanColor })
@@ -281,25 +298,27 @@ function TaskBoard(props) {
     settaskOwner(item.Task_owner)
     settaskCreateDate(item.Task_createDate)
     var taskid = item.Task_id
-    var newState = ""
+    // var newState = ""
 
-    if (item.Task_state == "open") {
-      newState = "toDo"
-    } else if (item.Task_state == "toDo") {
-      newState = "doing"
-    } else if (item.Task_state == "doing") {
-      newState = "done"
-    } else if (item.Task_state == "done") {
-      newState = "close"
-    } else {
-      newState = item.Task_state
-    }
+    // if (item.Task_state == "open") {
+    //   newState = "toDo"
+    // } else if (item.Task_state == "toDo") {
+    //   newState = "doing"
+    // } else if (item.Task_state == "doing") {
+    //   newState = "done"
+    // } else if (item.Task_state == "done") {
+    //   newState = "close"
+    // } else {
+    //   newState = item.Task_state
+    // }
     var initialState = item.Task_state
-    console.log("NewState: ")
-    console.log(newState)
+    var taskAppAcronym = item.Task_app_Acronym
+    // console.log("NewState: ")
+    // console.log(newState)
     var movement = "shiftRight"
     var userName = sessionStorage.getItem("username")
-    const response = await Axios.post("http://localhost:8080/updateTask2", { taskid, initialState, newState, movement, userName, taskNotes })
+    const response = await Axios.post("http://localhost:8080/updateTask2", { taskid, initialState, movement, userName, taskNotes, taskAppAcronym })
+    // const response = await Axios.post("http://localhost:8080/updateTask2", { taskid, initialState, newState, movement, userName, taskNotes })
     // if (response.data.updated === 1) {
     // console.log("22222222")
     console.log("Update Task Result:")
@@ -327,26 +346,27 @@ function TaskBoard(props) {
     settaskCreator(item.Task_creator)
     settaskOwner(item.Task_owner)
     settaskCreateDate(item.Task_createDate)
-    var taskid = item.Task_id
-    var newState = ""
 
-    if (item.Task_state == "toDo") {
-      newState = "open"
-    } else if (item.Task_state == "doing") {
-      newState = "toDo"
-    } else if (item.Task_state == "done") {
-      newState = "doing"
-    } else if (item.Task_state == "close") {
-      newState = "done"
-    } else {
-      newState = item.Task_state
-    }
+    var taskid = item.Task_id
+    // var newState = ""
+
+    // if (item.Task_state == "toDo") {
+    //   newState = "open"
+    // } else if (item.Task_state == "doing") {
+    //   newState = "toDo"
+    // } else if (item.Task_state == "done") {
+    //   newState = "doing"
+    // } else if (item.Task_state == "close") {
+    //   newState = "done"
+    // } else {
+    //   newState = item.Task_state
+    // }
     var initialState = item.Task_state
-    console.log("NewState: ")
-    console.log(newState)
+    // console.log("NewState: ")
+    // console.log(newState)
     var movement = "shiftLeft"
     var userName = sessionStorage.getItem("username")
-    const response = await Axios.post("http://localhost:8080/updateTask2", { taskid, initialState, newState, movement, userName, taskNotes })
+    const response = await Axios.post("http://localhost:8080/updateTask2", { taskid, initialState, movement, userName, taskNotes })
     // if (response.data.updated === 1) {
     // console.log("22222222")
     console.log("Update Task Result:")
@@ -498,7 +518,8 @@ function TaskBoard(props) {
             </label>
             {/* <input value={taskPlan} onChange={e => settaskPlan(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
             {/* <Select components={animatedComponents} defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => settaskPlan(e.value)} /> */}
-            <Select components={animatedComponents} defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => setNewTaskPlan(e.value)} />
+            {console.log("FrontEnd Check adjust plan: " + adjustPlan)}
+            {adjustPlan == true ? <Select components={animatedComponents} defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => setNewTaskPlan(e.value)} /> : <Select components={animatedComponents} defaultValue={defaultPlan} isDisabled={true} options={data3} autosize={true} onChange={e => setNewTaskPlan(e.value)} />}
           </p>
           <p style={{ display: "table-row" }}>
             <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>

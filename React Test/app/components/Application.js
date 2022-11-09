@@ -85,6 +85,8 @@ function Application() {
       setisPermitCreate(response.data.isCreate)
       setisPl(response.data.isPl)
       setisPm(response.data.isPm)
+      console.log("IS PL: ")
+      console.log(response.data.isPl)
       console.log("IS PM: ")
       console.log(response.data.isPm)
       console.log("IS CREATE: ")

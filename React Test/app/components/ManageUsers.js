@@ -34,7 +34,7 @@ function ManageUsers() {
   async function authUser(username, token) {
     // Api call to authenticate and check group user
     try {
-      const response = await Axios.post("http://localhost:8080/authUser", { username, token })
+      const response = await Axios.post("http://localhost:8080/authUser2", { username, token })
 
       setLoggedIn(response.data.login)
       setisAdmin(response.data.isAdmin)

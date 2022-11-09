@@ -11,6 +11,7 @@ import Snackbar from "@mui/material/Snackbar"
 import MuiAlert from "@mui/material/Alert"
 import Select from "react-select"
 import makeAnimated from "react-select/animated"
+import TextareaAutosize from "@mui/base/TextareaAutosize"
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -106,13 +107,38 @@ function CreateApplication(props) {
       props.onSubmit(count)
       setCount(count + 1)
       closeModal()
+      setAppAcronym("")
+      setAppDescription("")
+      setAppStartDate("")
+      setAppEndDate("")
+      setPermitOpen("")
+      setPermitToDo("")
+      setPermitDoing("")
+      setPermitDone("")
+      setPermitCreate("")
+      setAppRnumber("")
       // setMessage(response.data.message)
       // setOpen(true)
+    } else if (response.data.message == "Application Name cannot be empty") {
+      setSuccess("error")
+      // console.log(response.data)
+    } else if (response.data.message == "Description cannot be empty") {
+      setSuccess("error")
+      // console.log(response.data)
+    } else if (response.data.message == "Start Date cannot be empty") {
+      setSuccess("error")
+      // console.log(response.data)
+    } else if (response.data.message == "End Date cannot be empty") {
+      setSuccess("error")
+      // console.log(response.data)
+    } else if (response.data.message == "Please select all permission") {
+      setSuccess("error")
+      // console.log(response.data)
     } else {
       console.log("Error")
       setSuccess("error")
     }
-    closeModal()
+
     setMessage(response.data.message)
     setOpen(true)
   }
@@ -123,6 +149,11 @@ function CreateApplication(props) {
       console.log("Group successfully created")
       setSuccess("success")
       closeModal()
+      // console.log(response.data)
+    }
+    if (response.data.message == "Task Name cannot be empty") {
+      console.log("Group successfully created")
+      setSuccess("success")
       // console.log(response.data)
     }
     // if (response.data.message == "Group Name already exist in Database") {
@@ -150,71 +181,77 @@ function CreateApplication(props) {
           {message}
         </Alert>
       </Snackbar>
-      <form>
-        <Modal name="ReactModal__Overlay" isOpen={modalIsOpen} onAfterOpen={afterOpenModal} onRequestClose={closeModal} style={customStyles} contentLabel="Example Modal">
-          <h2 ref={_subtitle => (subtitle = _subtitle)}>Create Application</h2>
-          {/* <div>Enter New Group Name!!!</div> */}
-          {/* <button onClick={closeModal}>close</button> */}
-          <form>
-            <label htmlFor="username-register" className="text-muted mb-1">
-              App Name:
-            </label>
-            <input style={{ marginLeft: "10px" }} onChange={e => setAppAcronym(e.target.value)} />
-            <label style={{ marginLeft: "15px" }} htmlFor="username-register" className="text-muted mb-1">
+      {/* <form action=""> */}
+      <Modal name="ReactModal__Overlay" isOpen={modalIsOpen} onAfterOpen={afterOpenModal} onRequestClose={closeModal} style={customStyles} contentLabel="Example Modal">
+        <h2 ref={_subtitle => (subtitle = _subtitle)}>Create Application</h2>
+        {/* <div>Enter New Group Name!!!</div> */}
+        {/* <button onClick={closeModal}>close</button> */}
+        <form>
+          <label htmlFor="username-register" className="text-muted mb-1">
+            App Name:
+          </label>
+          <input type="text" class="txtPost" style={{ marginLeft: "10px" }} onChange={e => setAppAcronym(e.target.value)} required />
+          <label style={{ marginLeft: "10px" }} htmlFor="username-register" className="text-muted mb-1">
+            Start:
+          </label>
+          <input style={{ marginLeft: "10px" }} type="date" onChange={e => setAppStartDate(e.target.value)} required />
+          <label style={{ marginLeft: "10px" }} htmlFor="username-register" className="text-muted mb-1">
+            End:
+          </label>
+          <input style={{ marginLeft: "10px" }} type="date" onChange={e => setAppEndDate(e.target.value)} required />
+          {/* <label style={{ marginLeft: "15px" }} htmlFor="username-register" className="text-muted mb-1">
               Description:
             </label>
-            <input style={{ marginLeft: "10px" }} onChange={e => setAppDescription(e.target.value)} />
-            <label style={{ marginLeft: "15px" }} htmlFor="username-register" className="text-muted mb-1">
-              R.no:
-            </label>
-            <input style={{ marginLeft: "10px" }} onChange={e => setAppRnumber(e.target.value)} />
-            <div>
-              <br></br>
-            </div>
-            <label htmlFor="username-register" className="text-muted mb-1">
-              Start:
-            </label>
-            <input onChange={e => setAppStartDate(e.target.value)} />
-            <label htmlFor="username-register" className="text-muted mb-1">
-              End:
-            </label>
-            <input onChange={e => setAppEndDate(e.target.value)} />
-            <br></br>
-            <label htmlFor="username-register" className="text-muted mb-1">
-              Permit Open:
-            </label>
-            {/* <input value={appPermitOpen} onChange={e => setPermitOpen(e.target.value)} /> */}
-            {/* <Select options={data2} onChange={e => setPermitOpen(e)} /> */}
-            <Select components={animatedComponents} options={data2} autosize={true} onChange={e => setPermitOpen(e.value)} />
-            <label htmlFor="username-register" className="text-muted mb-1">
-              Permit ToDo:
-            </label>
-            {/* <input value={appPermitToDoList} onChange={e => setPermitToDo(e.target.value)} /> */}
-            <Select components={animatedComponents} options={data2} autosize={true} onChange={e => setPermitToDo(e.value)} />
-            <label htmlFor="username-register" className="text-muted mb-1">
-              Permit Doing:
-            </label>
-            {/* <input value={appPermitDoing} onChange={e => setPermitDoing(e.target.value)} /> */}
-            <Select components={animatedComponents} options={data2} autosize={true} onChange={e => setPermitDoing(e.value)} />
-            <label htmlFor="username-register" className="text-muted mb-1">
-              Permit Done:
-            </label>
-            {/* <input value={appPermitDone} onChange={e => setPermitDone(e.target.value)} /> */}
-            <Select components={animatedComponents} options={data2} autosize={true} onChange={e => setPermitDone(e.value)} />
-            <label htmlFor="username-register" className="text-muted mb-1">
-              Permit Create:
-            </label>
-            <Select components={animatedComponents} options={data2} autosize={true} onChange={e => setPermitCreate(e.value)} />
-            {/* <input value={appPermitCreate} onChange={e => setPermitCreate(e.target.value)} /> */}
-            {/* <Select closeMenuOnSelect={false} components={animatedComponents} defaultValue={defaultGroupsCreate} isMulti options={data2} onChange={handleChange} /> */}
-            <button onClick={submit}>Save</button>
-          </form>
-          <div>
-            <br></br>
-          </div>
-          <button onClick={closeModal}>close</button>
-        </Modal>
-      </form>
+            <input style={{ marginLeft: "10px" }} onChange={e => setAppDescription(e.target.value)} /> */}
+          <label style={{ marginLeft: "15px" }} htmlFor="username-register" className="text-muted mb-1">
+            R.no:
+          </label>
+          <input style={{ marginLeft: "10px" }} type="number" min="0" step="1" onChange={e => setAppRnumber(e.target.value)} required />
+          <br />
+          <label htmlFor="username-register" className="text-muted mb-1">
+            Description:
+          </label>
+          {/* <input style={{ marginLeft: "10px" }} onChange={e => setAppDescription(e.target.value)} /> */}
+          <TextareaAutosize maxRows={4} aria-label="maximum height" onChange={e => setAppDescription(e.target.value)} style={{ width: "100%", marginLeft: "10px" }} required />
+          <div></div>
+
+          <label htmlFor="username-register" className="text-muted mb-1">
+            Permit Open:
+          </label>
+          {/* <input value={appPermitOpen} onChange={e => setPermitOpen(e.target.value)} /> */}
+          {/* <Select options={data2} onChange={e => setPermitOpen(e)} /> */}
+          <Select components={animatedComponents} options={data2} autosize={true} onChange={e => setPermitOpen(e.value)} required />
+          <label htmlFor="username-register" className="text-muted mb-1">
+            Permit ToDo:
+          </label>
+          {/* <input value={appPermitToDoList} onChange={e => setPermitToDo(e.target.value)} /> */}
+          <Select components={animatedComponents} options={data2} autosize={true} onChange={e => setPermitToDo(e.value)} required />
+          <label htmlFor="username-register" className="text-muted mb-1">
+            Permit Doing:
+          </label>
+          {/* <input value={appPermitDoing} onChange={e => setPermitDoing(e.target.value)} /> */}
+          <Select components={animatedComponents} options={data2} autosize={true} onChange={e => setPermitDoing(e.value)} required />
+          <label htmlFor="username-register" className="text-muted mb-1">
+            Permit Done:
+          </label>
+          {/* <input value={appPermitDone} onChange={e => setPermitDone(e.target.value)} /> */}
+          <Select components={animatedComponents} options={data2} autosize={true} onChange={e => setPermitDone(e.value)} required />
+          <label htmlFor="username-register" className="text-muted mb-1">
+            Permit Create:
+          </label>
+          <Select components={animatedComponents} options={data2} autosize={true} onChange={e => setPermitCreate(e.value)} required />
+          {/* <input value={appPermitCreate} onChange={e => setPermitCreate(e.target.value)} /> */}
+          {/* <Select closeMenuOnSelect={false} components={animatedComponents} defaultValue={defaultGroupsCreate} isMulti options={data2} onChange={handleChange} /> */}
+          <button type="submit" onClick={submit}>
+            Save
+          </button>
+        </form>
+        <div>
+          <br></br>
+        </div>
+        <button onClick={closeModal}>close</button>
+      </Modal>
+      {/* </form> */}
       <button className="py-1 mt-2 btn btn-lg btn-warning btn-block" onClick={openModal}>
         Create Application
       </button>

@@ -213,9 +213,26 @@ function DisplayApplication(props) {
       console.log("Application table successfully Updated")
       setMessage(response.data.message)
       setOpen(true)
+    } else if (response.data.message == "Application Name cannot be empty") {
+      setSuccess("error")
+      // console.log(response.data)
+    } else if (response.data.message == "Description cannot be empty") {
+      setSuccess("error")
+      // console.log(response.data)
+    } else if (response.data.message == "Start Date cannot be empty") {
+      setSuccess("error")
+      // console.log(response.data)
+    } else if (response.data.message == "End Date cannot be empty") {
+      setSuccess("error")
+      // console.log(response.data)
+    } else if (response.data.message == "Please select all permission") {
+      setSuccess("error")
+      // console.log(response.data)
     } else {
       console.log("Error")
     }
+    setMessage(response.data.message)
+    setOpen(true)
   }
   function manageViewButtonFunction(appAcronym, appRnumber) {
     sessionStorage.setItem("appRnumber", appRnumber)
@@ -296,6 +313,11 @@ function DisplayApplication(props) {
 
   return (
     <div>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={success} sx={{ width: "100%" }}>
+          {message}
+        </Alert>
+      </Snackbar>
       <Modal name="ReactModal__Overlay" isOpen={modalIsOpen} onAfterOpen={afterOpenModal} onRequestClose={closeModal} style={customStyles} contentLabel="Example Modal">
         <h2 ref={_subtitle => (subtitle = _subtitle)}>Edit Application</h2>
         {/* <div>Enter New Group Name!!!</div> */}
@@ -312,7 +334,7 @@ function DisplayApplication(props) {
           <label style={{ marginLeft: "15px" }} htmlFor="username-register" className="text-muted mb-1">
             R.no:
           </label>
-          <input style={{ marginLeft: "10px" }} value={appRnumber} onChange={e => setAppRnumber(e.target.value)} />
+          <input style={{ marginLeft: "10px" }} type="number" min="0" step="1" value={appRnumber} onChange={e => setAppRnumber(e.target.value)} />
           <div>
             <br></br>
           </div>
@@ -396,7 +418,7 @@ function DisplayApplication(props) {
                   <TableCell align="center">{item.App_Description}</TableCell>
                   <TableCell align="center">{item.App_Rnumber}</TableCell> */}
                   <TableCell align="center">{item.App_Acronym}</TableCell>
-                  <TableCell align="center">{item.App_Description}</TableCell>
+                  <TableCell align="center">{item.App_Description.substring(0, 100)}</TableCell>
                   {/* <TableCell align="center">{item.App_Rnumber}</TableCell> */}
                   <TableCell align="center">
                     {/* <Button onClick={() => managerUserButtonFunction(item.username, item.email, item.password, item.groups, item.isactive)} variant="contained" size="small">
