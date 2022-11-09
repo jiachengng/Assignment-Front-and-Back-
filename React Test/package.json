@@ -40,6 +40,7 @@
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.4.1",
     "react-select": "^5.5.4",
+    "react-select-date": "^0.1.1",
     "react-tooltip": "^4.2.21",
     "react-transition-group": "^4.4.5",
     "socket.io-client": "^4.5.1",

@@ -11,6 +11,7 @@ import Snackbar from "@mui/material/Snackbar"
 import MuiAlert from "@mui/material/Alert"
 import Select from "react-select"
 import makeAnimated from "react-select/animated"
+import TextareaAutosize from "@mui/base/TextareaAutosize"
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -190,7 +191,8 @@ function CreateTask(props) {
               <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
                 Description:
               </label>
-              <input onChange={e => setTaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <TextareaAutosize maxRows={4} aria-label="maximum height" onChange={e => setTaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              {/* <input onChange={e => setTaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
               <br />
             </p>
             <p style={{ display: "table-row" }}>
@@ -205,7 +207,8 @@ function CreateTask(props) {
               <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
                 Task Notes:
               </label>
-              <input onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <TextareaAutosize maxRows={4} aria-label="maximum height" onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              {/* <input onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
               <br />
             </p>
             <div>

@@ -226,6 +226,7 @@ function TaskBoard(props) {
     } else if (x == "close") {
       y = isPermitCreate
     }
+
     if (y == true) {
       openModal()
     } else {
@@ -476,7 +477,8 @@ function TaskBoard(props) {
               Description:
             </label>
             {/* <input value={taskDescription} onChange={e => setDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-            <input defaultValue={taskDescription} onChange={setSomethingNew} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <TextareaAutosize maxRows={4} aria-label="maximum height" placeholder="Maximum 4 rows" defaultValue={taskDescription} onChange={setSomethingNew} style={{ display: "table-cell", marginLeft: "5px" }} />
+            {/* <input defaultValue={taskDescription} onChange={setSomethingNew} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
             {/* <input value={taskDescription} onChange={e => setnewtaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
             <br />
           </p>
@@ -485,7 +487,8 @@ function TaskBoard(props) {
               Task Notes:
             </label>
             {/* <input value={taskNotes} onChange={e => settaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-            <input onChange={e => setnewtaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            {/* <input onChange={e => setnewtaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+            <TextareaAutosize maxRows={2} aria-label="maximum height" placeholder="Add notes in any" onChange={e => setnewtaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
 
             <br />
           </p>

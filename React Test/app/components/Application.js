@@ -128,7 +128,7 @@ function Application() {
           <div className="col-lg-3 pl-lg-5 py-3 py-md-5 pb-3 py-lg-1">
             {/* aa={sessionStorage.getItem("appAcronym") */}
             {/* props.aa */}
-            <CreateTask change={change} onSubmit={handleSubmit} />
+            {isPermitCreate ? <CreateTask change={change} onSubmit={handleSubmit} /> : null}
             {isPm ? <CreatePlan onSubmit={handleSubmit} /> : null}
             {console.log(data)}
             {data.map((item, index) => {

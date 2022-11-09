@@ -480,7 +480,7 @@ exports.authUser = async (req, res) => {
   console.log("Array5 = ")
   console.log(req.body.result)
   // console.log(req.body.result[0])
-  if (req.body.result) {
+  if (req.body.result != null || req.body.result != [] || req.body.result != "") {
     // var permitOpen = req.body.result[0].App_permit_Open
     // var permitToDo = req.body.result[0].App_permit_toDoList
     // var permitDoing = req.body.result[0].App_permit_Doing
@@ -674,6 +674,118 @@ exports.authUser = async (req, res) => {
       isDoing: permitDoingBoolean,
       isDone: permitDoneBoolean,
       isCreate: permitCreateBoolean,
+      isPl: isPl,
+      isPm: isPm
+    })
+  }
+}
+
+exports.authUser2 = async (req, res) => {
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    })
+  }
+  console.log("Res.body.username: " + req.body.username)
+  //is admin?
+  var isAdmin = false
+  var testing = await CheckGroup(req.body.username, "admin")
+    .then(resolve => {
+      if (resolve) {
+        console.log("RETURN TRUE")
+        return true
+      } else {
+        console.log("RETURN FALSE")
+        return false
+      }
+    })
+    .catch(
+      reject => {}
+      // console.log("Runing check if active")
+      //})
+    )
+  isAdmin = testing
+  console.log("IsAdmin: " + isAdmin)
+
+  //is pl?
+  var isPl = false
+  var testing2 = await CheckGroup(req.body.username, "pl")
+    .then(resolve => {
+      if (resolve) {
+        console.log("RETURN TRUE")
+        return true
+      } else {
+        console.log("RETURN FALSE")
+        return false
+      }
+    })
+    .catch(
+      reject => {}
+      // console.log("Runing check if active")
+      //})
+    )
+  isPl = testing2
+  //is pm?
+  var isPm = false
+  var testing3 = await CheckGroup(req.body.username, "pm")
+    .then(resolve => {
+      if (resolve) {
+        console.log("RETURN TRUE")
+        return true
+      } else {
+        console.log("RETURN FALSE")
+        return false
+      }
+    })
+    .catch(
+      reject => {}
+      // console.log("Runing check if active")
+      //})
+    )
+  isPm = testing3
+
+  var arr = []
+  console.log("Array5 = ")
+  console.log(req.body.result)
+
+  var token = req.body.token
+
+  if (token) {
+    try {
+      console.log("Token: " + token)
+      const decode = jwt.verify(token, process.env.JWT_SECRET)
+      console.log("decode = ")
+      console.log(decode.id)
+      if (req.body.username === decode.id) {
+        res.status(200).send({
+          login: true,
+          isAdmin: isAdmin,
+          isPl: isPl,
+          isPm: isPm,
+          username: decode.id
+        })
+      } else {
+        res.status(200).send({
+          login: false,
+          isAdmin: isAdmin,
+          isPl: isPl,
+          isPm: isPm,
+          username: decode.id
+        })
+      }
+    } catch (e) {
+      console.log(e)
+      res.status(200).send({
+        login: false,
+        isAdmin: isAdmin,
+        isPl: isPl,
+        isPm: isPm
+      })
+    }
+  } else {
+    res.status(200).send({
+      login: false,
+      isAdmin: isAdmin,
       isPl: isPl,
       isPm: isPm
     })

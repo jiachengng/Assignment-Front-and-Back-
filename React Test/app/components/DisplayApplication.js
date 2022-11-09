@@ -67,6 +67,14 @@ function DisplayApplication(props) {
   const [appPermitCreate, setPermitCreate] = React.useState("")
   const [appRnumber, setAppRnumber] = React.useState("")
 
+  const [isPermitOpen, setisPermitOpen] = useState(false)
+  const [isPermitToDo, setisPermitTodo] = useState(false)
+  const [isPermitDone, setisPermitDone] = useState(false)
+  const [isPermitDoing, setisPermitDoing] = useState(false)
+  const [isPm, setisPm] = useState(false)
+  const [isPl, setisPl] = useState(false)
+  const [isPermitCreate, setisPermitCreate] = useState(false)
+
   const customStyles = {
     content: {
       top: "50%",
@@ -130,15 +138,6 @@ function DisplayApplication(props) {
     setData2(response.data.data)
   }
 
-  const loadData3 = async () => {
-    var appAcronym = sessionStorage.getItem("appAcronym")
-    const response = await Axios.post("http://localhost:8080/displayPlanDetails2", { appAcronym })
-    console.log("displaying group array: !!!")
-    console.log(response.data.data)
-    setData3(response.data.data)
-    // const rows = response.data
-    // console.log("HELLO")
-  }
   function openModal() {
     setIsOpen(true)
   }
@@ -224,13 +223,66 @@ function DisplayApplication(props) {
     navigate(`/application`)
   }
 
+  async function loadData5(username, token) {
+    var appAcronym = sessionStorage.getItem("appAcronym")
+    await Axios.post("http://localhost:8080/displayApplicationsDetails2", { appAcronym })
+      .then(result => {
+        console.log("load data 5 result")
+        console.log(result.data)
+        authUser(username, token, result.data)
+      })
+      .catch(err => {
+        console.log("Load data5 error")
+        console.log(err)
+      })
+    // setData5(response.data)
+    // console.log("LoadData5: ")
+    // console.log(response.data)
+    // return response.data
+  }
+
   async function authUser(username, token) {
-    const response = await Axios.post("http://localhost:8080/authUser", { username, token })
-    setLoggedIn(response.data.login)
-    setisAdmin(response.data.isAdmin)
-    console.log("printing is login and is admin")
-    console.log(response.data.login)
-    console.log(response.data.isAdmin)
+    // Api call to authenticate and check group user
+    try {
+      // const response1 = await Axios.post("http://localhost:8080/displayApplicationsDetails2", { appAcronym })
+      // var data5 = response1.data
+      // console.log(data5)
+      const response = await Axios.post("http://localhost:8080/authUser2", { username, token })
+
+      setLoggedIn(response.data.login)
+      setisAdmin(response.data.isAdmin)
+      setUsername(response.data.username)
+
+      setisPermitOpen(response.data.isOpen)
+      setisPermitTodo(response.data.isToDo)
+      setisPermitDoing(response.data.isDoing)
+      setisPermitDone(response.data.isDone)
+      setisPermitCreate(response.data.isCreate)
+      setisPl(response.data.isPl)
+      setisPm(response.data.isPm)
+      console.log("IS PL: ")
+      console.log(response.data.isPl)
+      console.log("IS PM: ")
+      console.log(response.data.isPm)
+      console.log("IS CREATE: ")
+      console.log(response.data.isCreate)
+
+      if (response.data.login !== true) {
+        console.log(response.data.login)
+        console.log("NOT LOGGED IN")
+        sessionStorage.clear()
+        navigate("/")
+      }
+      // if (response.data.isAdmin !== true) {
+      //   console.log(response.data.isAdmin)
+      //   console.log("NOT ADMIN")
+      //   sessionStorage.clear()
+      //   navigate("/")
+      // }
+    } catch (e) {
+      console.log(e)
+      navigate("/")
+    }
   }
 
   useEffect(() => {
@@ -238,7 +290,8 @@ function DisplayApplication(props) {
     const token = sessionStorage.getItem("token")
     loadData() // ,
     loadData2()
-    // authUser(username, token)
+    // loadData5(username, token)
+    authUser(username, token)
   }, [props.users])
 
   return (
@@ -349,9 +402,11 @@ function DisplayApplication(props) {
                     {/* <Button onClick={() => managerUserButtonFunction(item.username, item.email, item.password, item.groups, item.isactive)} variant="contained" size="small">
                           Edit
                         </Button> */}
-                    <Button onClick={() => manageApplicationButtonFunction(item)} variant="contained" size="small">
-                      Edit
-                    </Button>
+                    {isPl ? (
+                      <Button onClick={() => manageApplicationButtonFunction(item)} variant="contained" size="small">
+                        Edit
+                      </Button>
+                    ) : null}
                     <Button onClick={() => manageViewButtonFunction(item.App_Acronym, item.App_Rnumber)} variant="contained" size="small">
                       View
                     </Button>

@@ -12,6 +12,7 @@ import MuiAlert from "@mui/material/Alert"
 import Select from "react-select"
 import makeAnimated from "react-select/animated"
 import { BlockPicker } from "react-color"
+import Calendar from "react-select-date"
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -176,14 +177,15 @@ function CreatePlan(props) {
               <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
                 Start Date:
               </label>
-              <input onChange={e => setPlanStartDate(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <input onChange={e => setPlanStartDate(e.target.value)} type="date" style={{ display: "table-cell", marginLeft: "5px" }} />
+              {/* <Calendar onSelect={date => setPlanStartDate(date)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
               <br />
             </p>
             <p style={{ display: "table-row" }}>
               <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
                 End Date:
               </label>
-              <input onChange={e => setPlanEndDate(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <input onChange={e => setPlanEndDate(e.target.value)} type="date" style={{ display: "table-cell", marginLeft: "5px" }} />
               <br />
             </p>
             <p style={{ display: "table-row" }}>

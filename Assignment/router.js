@@ -23,6 +23,7 @@ apiRouter.route("/displayUserDetails").get(userController.displayUserDetails)
 apiRouter.route("/displayOneUserDetails").post(userController.displayOneUserDetails)
 apiRouter.route("/displayOneUserGroup").post(userController.displayOneUserGroup)
 apiRouter.route("/authUser").post(userController.authUser)
+apiRouter.route("/authUser2").post(userController.authUser2)
 apiRouter.route("/getAllGroups").post(groupController.getAllGroups)
 
 apiRouter.route("/displayApplicationsDetails").post(applicationController.displayApplicationsDetails)
