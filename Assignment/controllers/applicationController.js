@@ -27,6 +27,32 @@ exports.displayApplicationsDetails = async (req, res) => {
   })
 }
 
+exports.displayApplicationsDetails2 = async (req, res) => {
+  // Validate request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    })
+  }
+  // sql.query(`SELECT * FROM user`, async (err, result) => {
+  sql.query(`SELECT App_permit_Open,App_permit_toDoList,App_permit_Doing,App_permit_Done,App_permit_Create FROM application WHERE App_Acronym = '${req.body.appAcronym}'`, async (err, result) => {
+    if (err) {
+      console.log("error: ", err)
+      res.send("Unable to get results")
+      return
+    } else {
+      // if (result.length === 1) {
+      //   console.log("User details: ", result[0])
+      // } else {
+      //   console.log("Error")
+      // }
+      res.send(result)
+      console.log(result)
+      console.log("============================")
+    }
+  })
+}
+
 exports.updateApplication = async (req, res) => {
   console.log("Running: " + "updateApplication")
   console.log("App name: " + req.body.appAcronym)
@@ -116,13 +142,18 @@ exports.createTask = async (req, res, result) => {
     var newNote = "[" + req.body.taskCreator + "] added a new note: " + req.body.taskNotes + " [" + dateString + "]"
     taskNote = newNote + "\n" + taskNote
   }
+  var taskPlan = null
+  if (req.body.plan != "") {
+    taskPlan = req.body.plan
+  }
   var newTask = {
     Task_id: req.body.taskId,
     Task_name: req.body.taskName,
     Task_description: req.body.taskDescription,
     // Task_notes: req.body.taskNotes,
     Task_notes: taskNote,
-    Task_plan: req.body.plan,
+    // Task_plan: req.body.plan,
+    Task_plan: taskPlan,
     Task_app_Acronym: req.body.appAcronym,
     Task_state: "open",
     Task_creator: req.body.taskCreator,
@@ -347,20 +378,44 @@ exports.updateTask = async (req, res) => {
       taskNote = newNote + "\n" + taskNote
     } else {
       taskToUpdate = initialDescription
-      var newNote = "[" + req.body.userName + "] editted the description from: " + initialDescription + " to " + newTaskDescription + " [" + dateString + "]"
-      taskNote = newNote + "\n" + taskNote
+      // var newNote = "[" + req.body.userName + "] editted the description from: " + initialDescription + " to " + newTaskDescription + " [" + dateString + "]"
+      // taskNote = newNote + "\n" + taskNote
     }
   } else {
     taskToUpdate = initialDescription
   }
+  //plan
+  //description
+  var planToUpdate = ""
+  var initialPlan = req.body.taskPlan
+  var newPlan = req.body.newTaskPlan
+  console.log("Initial Plan: ")
+  console.log(initialPlan)
+  console.log("New Plan: ")
+  console.log(newPlan)
 
-  console.log("Initial Description: " + initialDescription)
-  console.log("New Description: " + newTaskDescription)
-  console.log("Final Description: " + taskToUpdate)
+  if (newPlan != initialPlan) {
+    if (newPlan != "") {
+      planToUpdate = newPlan
+      var newNote = "[" + req.body.userName + "] editted the plan from: " + initialPlan + " to " + newPlan + " [" + dateString + "]"
+      taskNote = newNote + "\n" + taskNote
+    } else {
+      planToUpdate = initialPlan
+      // var newNote = "[" + req.body.userName + "] editted the description from: " + initialDescription + " to " + newTaskDescription + " [" + dateString + "]"
+      // taskNote = newNote + "\n" + taskNote
+    }
+  } else {
+    planToUpdate = initialPlan
+  }
+
+  // console.log("Initial Description: " + initialDescription)
+  // console.log("New Description: " + newTaskDescription)
+  // console.log("Final Description: " + taskToUpdate)
 
   // if (req.body.taskNotes == "") {
   // sql.query(`UPDATE task SET Task_name = '${req.body.taskName}',Task_description = '${req.body.taskDescription}',Task_notes = '${taskNote}}',Task_state = '${req.body.taskState}', Task_plan = '${req.body.taskPlan}' WHERE Task_id = '${req.body.taskId}'`, async (err, result) => {
-  sql.query(`UPDATE task SET Task_name = '${req.body.taskName}',Task_description = '${taskToUpdate}',Task_notes = '${taskNote}',Task_state = '${req.body.taskState}', Task_plan = '${req.body.taskPlan}' WHERE Task_id = '${req.body.taskId}'`, async (err, result) => {
+  // sql.query(`UPDATE task SET Task_name = '${req.body.taskName}',Task_description = '${taskToUpdate}',Task_notes = '${taskNote}',Task_state = '${req.body.taskState}', Task_plan = '${req.body.taskPlan}' WHERE Task_id = '${req.body.taskId}'`, async (err, result) => {
+  sql.query(`UPDATE task SET Task_description = '${taskToUpdate}',Task_notes = '${taskNote}', Task_plan = '${planToUpdate}' WHERE Task_id = '${req.body.taskId}'`, async (err, result) => {
     if (err) {
       console.log("1111111111111")
       console.log("error: ", err)
@@ -381,7 +436,19 @@ exports.updateTask2 = async (req, res) => {
   console.log("Update Task Inputs: ")
   console.log("State: " + req.body.newState)
   console.log("TaskId: " + req.body.taskid)
-  sql.query(`UPDATE task SET Task_state = '${req.body.newState}' WHERE Task_id = '${req.body.taskid}'`, async (err, result) => {
+  var m = new Date()
+  var dateString = m.getUTCFullYear() + "/" + ("0" + (m.getUTCMonth() + 1)).slice(-2) + "/" + ("0" + m.getUTCDate()).slice(-2) + " " + ("0" + m.getUTCHours()).slice(-2) + ":" + ("0" + m.getUTCMinutes()).slice(-2) + ":" + ("0" + m.getUTCSeconds()).slice(-2)
+  var taskNote = req.body.taskNotes
+  if (req.body.movement == "shiftRight") {
+    var newNote = "[" + req.body.userName + "] promoted the task from: " + req.body.initialState + " to " + req.body.newState + " [" + dateString + "]"
+  }
+  if (req.body.movement == "shiftLeft") {
+    var newNote = "[" + req.body.userName + "] demoted the task from: " + req.body.initialState + " to " + req.body.newState + " [" + dateString + "]"
+  }
+  // var newNote = "[" + req.body.userName + "] demoted the task from: " + req.body.initialState + " to " + newState + " [" + dateString + "]"
+  taskNote = newNote + "\n" + taskNote
+
+  sql.query(`UPDATE task SET Task_state = '${req.body.newState}', Task_notes='${taskNote}' WHERE Task_id = '${req.body.taskid}'`, async (err, result) => {
     if (err) {
       console.log("1111111111111")
       console.log("error: ", err)

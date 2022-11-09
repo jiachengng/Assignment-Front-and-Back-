@@ -19,6 +19,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 const animatedComponents = makeAnimated()
 
 function CreateTask(props) {
+  const [change, setChange] = useState(false)
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [groupname, setGroupname] = useState()
@@ -74,8 +75,13 @@ function CreateTask(props) {
     }
   }
 
+  // function handleSubmit(newUser) {
+  //   setChange(newUser)
+  // }
+
   function openModal() {
     setIsOpen(true)
+    // handleSubmit()
   }
   function afterOpenModal() {
     // references are now sync'd and can be accessed.
@@ -84,6 +90,7 @@ function CreateTask(props) {
 
   function closeModal() {
     setIsOpen(false)
+    // handleSubmit()
   }
   let subtitle
 
@@ -144,9 +151,11 @@ function CreateTask(props) {
     setMessage(response.data.message)
     setOpen(true)
   }
+
   useEffect(() => {
-    loadData2(), loadData()
-  }, [])
+    loadData2()
+    loadData()
+  }, [props.change])
   // props.onSubmit(count)
   // setCount(count + 1)
   //testing

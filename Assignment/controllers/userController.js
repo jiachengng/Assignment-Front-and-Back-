@@ -115,16 +115,6 @@ exports.logIn = (req, res) => {
         if (trueornot) {
           console.log("Logged in")
           sendToken(req.body.username, 200, res)
-
-          // const token = this.getJwtToken(req.body.username)
-
-          // res.status(200).send({
-          //   success: true,
-          //   results: result.length,
-          //   // requestMethod: req.requestMethod,
-          //   data: result,
-          //   token: token
-          // })
         } else {
           console.log("account cannot be found")
           return res.status(200).send({
@@ -429,6 +419,7 @@ exports.authUser = async (req, res) => {
     })
   }
   console.log("Res.body.username: " + req.body.username)
+  //is admin?
   var isAdmin = false
   var testing = await CheckGroup(req.body.username, "admin")
     .then(resolve => {
@@ -445,9 +436,185 @@ exports.authUser = async (req, res) => {
       // console.log("Runing check if active")
       //})
     )
-
   isAdmin = testing
   console.log("IsAdmin: " + isAdmin)
+
+  //is pl?
+  var isPl = false
+  var testing2 = await CheckGroup(req.body.username, "pl")
+    .then(resolve => {
+      if (resolve) {
+        console.log("RETURN TRUE")
+        return true
+      } else {
+        console.log("RETURN FALSE")
+        return false
+      }
+    })
+    .catch(
+      reject => {}
+      // console.log("Runing check if active")
+      //})
+    )
+  isPl = testing2
+  //is pm?
+  var isPm = false
+  var testing3 = await CheckGroup(req.body.username, "pm")
+    .then(resolve => {
+      if (resolve) {
+        console.log("RETURN TRUE")
+        return true
+      } else {
+        console.log("RETURN FALSE")
+        return false
+      }
+    })
+    .catch(
+      reject => {}
+      // console.log("Runing check if active")
+      //})
+    )
+  isPm = testing3
+
+  var arr = []
+  console.log("Array5 = ")
+  console.log(req.body.result)
+  // console.log(req.body.result[0])
+  if (req.body.result) {
+    // var permitOpen = req.body.result[0].App_permit_Open
+    // var permitToDo = req.body.result[0].App_permit_toDoList
+    // var permitDoing = req.body.result[0].App_permit_Doing
+    // var permitDone = req.body.result[0].App_permit_Done
+    // var permitCreate = req.body.result[0].App_permit_Create
+
+    // arr.push(req.body.result[0].App_permit_Open)
+    // arr.push(req.body.result[0].App_permit_toDoList)
+    // arr.push(req.body.result[0].App_permit_Doing)
+    // arr.push(req.body.result[0].App_permit_Done)
+    // arr.push(req.body.result[0].App_permit_Create)
+    var permitOpen = req.body.result[0].App_permit_Open
+    var permitTodo = req.body.result[0].App_permit_toDoList
+    var permitDoing = req.body.result[0].App_permit_Doing
+    var permitDone = req.body.result[0].App_permit_Done
+    var permitCreate = req.body.result[0].App_permit_Create
+
+    var permitOpenBoolean = await CheckGroup(req.body.username, permitOpen)
+      .then(resolve => {
+        if (resolve) {
+          console.log("RETURN TRUE")
+          return true
+        } else {
+          console.log("RETURN FALSE")
+          return false
+        }
+      })
+      .catch(
+        reject => {}
+        // console.log("Runing check if active")
+        //})
+      )
+
+    var permitTodoBoolean = await CheckGroup(req.body.username, permitTodo)
+      .then(resolve => {
+        if (resolve) {
+          console.log("RETURN TRUE")
+          return true
+        } else {
+          console.log("RETURN FALSE")
+          return false
+        }
+      })
+      .catch(
+        reject => {}
+        // console.log("Runing check if active")
+        //})
+      )
+
+    var permitDoingBoolean = await CheckGroup(req.body.username, permitDoing)
+      .then(resolve => {
+        if (resolve) {
+          console.log("RETURN TRUE")
+          return true
+        } else {
+          console.log("RETURN FALSE")
+          return false
+        }
+      })
+      .catch(
+        reject => {}
+        // console.log("Runing check if active")
+        //})
+      )
+
+    var permitDoneBoolean = await CheckGroup(req.body.username, permitDone)
+      .then(resolve => {
+        if (resolve) {
+          console.log("RETURN TRUE")
+          return true
+        } else {
+          console.log("RETURN FALSE")
+          return false
+        }
+      })
+      .catch(
+        reject => {}
+        // console.log("Runing check if active")
+        //})
+      )
+
+    var permitCreateBoolean = await CheckGroup(req.body.username, permitCreate)
+      .then(resolve => {
+        if (resolve) {
+          console.log("RETURN TRUE")
+          return true
+        } else {
+          console.log("RETURN FALSE")
+          return false
+        }
+      })
+      .catch(
+        reject => {}
+        // console.log("Runing check if active")
+        //})
+      )
+
+    // arr.push(permitOpen)
+    // arr.push(permitToDo)
+    // arr.push(permitDoing)
+    // arr.push(permitDone)
+    // arr.push(permitCreate)
+  }
+  console.log(permitOpenBoolean)
+  console.log(permitTodoBoolean)
+  console.log(permitDoingBoolean)
+  console.log(permitDoneBoolean)
+  console.log(permitCreateBoolean)
+  // var arr2 = []
+  // for (i = 0; i < arr.length; i++) {
+  //   var testing = await CheckGroup(req.body.username, arr[i])
+  //     .then(resolve => {
+  //       if (resolve) {
+  //         console.log("RETURN TRUE")
+  //         return true
+  //       } else {
+  //         console.log("RETURN FALSE")
+  //         return false
+  //       }
+  //     })
+  //     .catch(
+  //       reject => {}
+  //       // console.log("Runing check if active")
+  //       //})
+  //     )
+  //   arr2.push(testing)
+  // }
+  // console.log("arr2!")
+  // console.log(arr2)
+  // var isOpen = arr2[0]
+  // var isToDo = arr2[1]
+  // var isDoing = arr2[2]
+  // var isDone = arr2[3]
+  // var isCreate = arr2[4]
 
   var token = req.body.token
 
@@ -461,12 +628,26 @@ exports.authUser = async (req, res) => {
         res.status(200).send({
           login: true,
           isAdmin: isAdmin,
+          isOpen: permitOpenBoolean,
+          isToDo: permitTodoBoolean,
+          isDoing: permitDoingBoolean,
+          isDone: permitDoneBoolean,
+          isCreate: permitCreateBoolean,
+          isPl: isPl,
+          isPm: isPm,
           username: decode.id
         })
       } else {
         res.status(200).send({
           login: false,
           isAdmin: isAdmin,
+          isOpen: permitOpenBoolean,
+          isToDo: permitTodoBoolean,
+          isDoing: permitDoingBoolean,
+          isDone: permitDoneBoolean,
+          isCreate: permitCreateBoolean,
+          isPl: isPl,
+          isPm: isPm,
           username: decode.id
         })
       }
@@ -474,13 +655,27 @@ exports.authUser = async (req, res) => {
       console.log(e)
       res.status(200).send({
         login: false,
-        isAdmin: isAdmin
+        isAdmin: isAdmin,
+        isOpen: permitOpenBoolean,
+        isToDo: permitTodoBoolean,
+        isDoing: permitDoingBoolean,
+        isDone: permitDoneBoolean,
+        isCreate: permitCreateBoolean,
+        isPl: isPl,
+        isPm: isPm
       })
     }
   } else {
     res.status(200).send({
       login: false,
-      isAdmin: isAdmin
+      isAdmin: isAdmin,
+      isOpen: permitOpenBoolean,
+      isToDo: permitTodoBoolean,
+      isDoing: permitDoingBoolean,
+      isDone: permitDoneBoolean,
+      isCreate: permitCreateBoolean,
+      isPl: isPl,
+      isPm: isPm
     })
   }
 }

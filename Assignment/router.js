@@ -26,6 +26,8 @@ apiRouter.route("/authUser").post(userController.authUser)
 apiRouter.route("/getAllGroups").post(groupController.getAllGroups)
 
 apiRouter.route("/displayApplicationsDetails").post(applicationController.displayApplicationsDetails)
+apiRouter.route("/displayApplicationsDetails2").post(applicationController.displayApplicationsDetails2)
+
 apiRouter.route("/updateApplication").post(applicationController.updateApplication)
 apiRouter.route("/createApplication").post(applicationController.createApplication)
 apiRouter.route("/createTask").post(applicationController.createTask)

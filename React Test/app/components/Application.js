@@ -20,6 +20,13 @@ function Application() {
   const [loggedIn, setLoggedIn] = useState()
   const [isAdmin, setisAdmin] = useState()
   const [change, setChange] = useState(false)
+  const [isPermitOpen, setisPermitOpen] = useState(false)
+  const [isPermitToDo, setisPermitTodo] = useState(false)
+  const [isPermitDone, setisPermitDone] = useState(false)
+  const [isPermitDoing, setisPermitDoing] = useState(false)
+  const [isPm, setisPm] = useState(false)
+  const [isPl, setisPl] = useState(false)
+  const [isPermitCreate, setisPermitCreate] = useState(false)
 
   const [data, setData] = useState([])
 
@@ -35,6 +42,23 @@ function Application() {
     const response = await Axios.post("http://localhost:8080/displayPlanDetails")
     setData(response.data)
   }
+  async function loadData5(username, token) {
+    var appAcronym = sessionStorage.getItem("appAcronym")
+    await Axios.post("http://localhost:8080/displayApplicationsDetails2", { appAcronym })
+      .then(result => {
+        console.log("load data 5 result")
+        console.log(result.data)
+        authUser(username, token, result.data)
+      })
+      .catch(err => {
+        console.log("Load data5 error")
+        console.log(err)
+      })
+    // setData5(response.data)
+    // console.log("LoadData5: ")
+    // console.log(response.data)
+    // return response.data
+  }
 
   function handleSubmit(newUser) {
     console.log("supposedly count: " + newUser)
@@ -42,14 +66,29 @@ function Application() {
   }
 
   //const response = await Axios.post("http://localhost:8080/authUser", { username, token })
-  async function authUser(username, token) {
+  async function authUser(username, token, result) {
     // Api call to authenticate and check group user
     try {
-      const response = await Axios.post("http://localhost:8080/authUser", { username, token })
+      // const response1 = await Axios.post("http://localhost:8080/displayApplicationsDetails2", { appAcronym })
+      // var data5 = response1.data
+      // console.log(data5)
+      const response = await Axios.post("http://localhost:8080/authUser", { username, token, result })
 
       setLoggedIn(response.data.login)
       setisAdmin(response.data.isAdmin)
       setUsername(response.data.username)
+
+      setisPermitOpen(response.data.isOpen)
+      setisPermitTodo(response.data.isToDo)
+      setisPermitDoing(response.data.isDoing)
+      setisPermitDone(response.data.isDone)
+      setisPermitCreate(response.data.isCreate)
+      setisPl(response.data.isPl)
+      setisPm(response.data.isPm)
+      console.log("IS PM: ")
+      console.log(response.data.isPm)
+      console.log("IS CREATE: ")
+      console.log(response.data.isCreate)
 
       if (response.data.login !== true) {
         console.log(response.data.login)
@@ -57,12 +96,12 @@ function Application() {
         sessionStorage.clear()
         navigate("/")
       }
-      if (response.data.isAdmin !== true) {
-        console.log(response.data.isAdmin)
-        console.log("NOT ADMIN")
-        sessionStorage.clear()
-        navigate("/")
-      }
+      // if (response.data.isAdmin !== true) {
+      //   console.log(response.data.isAdmin)
+      //   console.log("NOT ADMIN")
+      //   sessionStorage.clear()
+      //   navigate("/")
+      // }
     } catch (e) {
       console.log(e)
       navigate("/")
@@ -72,7 +111,8 @@ function Application() {
   useEffect(() => {
     const username = sessionStorage.getItem("username")
     const token = sessionStorage.getItem("token")
-    authUser(username, token)
+    // authUser(username, token)
+    loadData5(username, token)
     loadData()
   }, [change])
 
@@ -88,8 +128,8 @@ function Application() {
           <div className="col-lg-3 pl-lg-5 py-3 py-md-5 pb-3 py-lg-1">
             {/* aa={sessionStorage.getItem("appAcronym") */}
             {/* props.aa */}
-            <CreateTask onSubmit={handleSubmit} />
-            <CreatePlan onSubmit={handleSubmit} />
+            <CreateTask change={change} onSubmit={handleSubmit} />
+            {isPm ? <CreatePlan onSubmit={handleSubmit} /> : null}
             {console.log(data)}
             {data.map((item, index) => {
               if (item.Plan_app_Acronym == sessionStorage.getItem("appAcronym")) {

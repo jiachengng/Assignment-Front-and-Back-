@@ -37,14 +37,22 @@ function TaskBoard(props) {
   const [data2, setData2] = useState([])
   const [data3, setData3] = useState([])
   const [data4, setData4] = useState([])
-  const [selectedOptions, setSelectedOptions] = useState([])
-  const [defaultGroupsCreate, setDefaultGroupsCreate] = useState([])
-  const [defaultGroupsOpen, setDefaultGroupsOpen] = useState([])
-  const [defaultGroupsToDo, setDefaultGroupsToDo] = useState([])
-  const [defaultGroupsDoing, setDefaultGroupsDoing] = useState([])
-  const [defaultGroupsDone, setDefaultGroupsDone] = useState([])
+  const [data5, setData5] = useState([])
+  // const [selectedOptions, setSelectedOptions] = useState([])
+  // const [defaultGroupsCreate, setDefaultGroupsCreate] = useState([])
+  // const [defaultGroupsOpen, setDefaultGroupsOpen] = useState([])
+  // const [defaultGroupsToDo, setDefaultGroupsToDo] = useState([])
+  // const [defaultGroupsDoing, setDefaultGroupsDoing] = useState([])
+  // const [defaultGroupsDone, setDefaultGroupsDone] = useState([])
   const [loggedIn, setLoggedIn] = useState()
   const [isAdmin, setisAdmin] = useState()
+  const [isPermitCreate, setisPermitCreate] = useState(false)
+  const [isPermitOpen, setisPermitOpen] = useState(false)
+  const [isPermitToDo, setisPermitTodo] = useState(false)
+  const [isPermitDone, setisPermitDone] = useState(false)
+  const [isPermitDoing, setisPermitDoing] = useState(false)
+  const [isPl, setisPl] = useState(false)
+  const [isPm, setisPm] = useState(false)
   const [count, setCount] = useState(50)
   const [editUser, setEditUser] = useState(0)
   const [username, setUsername] = useState()
@@ -59,17 +67,18 @@ function TaskBoard(props) {
   const [isactive, setChecked] = React.useState(false)
   const [onChanged, setOnChanged] = React.useState(false)
   const [modalIsOpen, setIsOpen] = React.useState(false)
+  const [modalIsOpen2, setIsOpen2] = React.useState(false)
 
   const [appAcronym, setAppAcronym] = React.useState("")
   const [appDescription, setAppDescription] = React.useState("")
   const [appStartDate, setAppStartDate] = React.useState("")
   const [appEndDate, setAppEndDate] = React.useState("")
-  const [appPermitOpen, setPermitOpen] = React.useState("")
-  const [appPermitToDoList, setPermitToDo] = React.useState("")
-  const [appPermitDoing, setPermitDoing] = React.useState("")
-  const [appPermitDone, setPermitDone] = React.useState("")
-  const [appPermitCreate, setPermitCreate] = React.useState("")
-  const [appRnumber, setAppRnumber] = React.useState("")
+  // const [appPermitOpen, setPermitOpen] = React.useState("")
+  // const [appPermitToDoList, setPermitToDo] = React.useState("")
+  // const [appPermitDoing, setPermitDoing] = React.useState("")
+  // const [appPermitDone, setPermitDone] = React.useState("")
+  // const [appPermitCreate, setPermitCreate] = React.useState("")
+  // const [appRnumber, setAppRnumber] = React.useState("")
 
   const [taskId, settaskId] = React.useState("")
   const [taskName, settaskName] = React.useState("")
@@ -78,6 +87,7 @@ function TaskBoard(props) {
   const [newtaskNotes, setnewtaskNotes] = React.useState("")
   const [taskNotes, settaskNotes] = React.useState("")
   const [taskPlan, settaskPlan] = React.useState("")
+  const [newTaskPlan, setNewTaskPlan] = React.useState("")
   const [defaultPlan, setDefaultPlan] = React.useState([])
   const [taskAppAcronym, settaskAppAcronym] = React.useState("")
   const [taskState, settaskState] = React.useState("")
@@ -158,6 +168,24 @@ function TaskBoard(props) {
     // const rows = response.data
     // console.log("HELLO")
   }
+
+  async function loadData5(username, token) {
+    var appAcronym = sessionStorage.getItem("appAcronym")
+    await Axios.post("http://localhost:8080/displayApplicationsDetails2", { appAcronym })
+      .then(result => {
+        console.log("load data 5 result")
+        console.log(result.data)
+        authUser(username, token, result.data)
+      })
+      .catch(err => {
+        console.log("Load data5 error")
+        console.log(err)
+      })
+    // setData5(response.data)
+    // console.log("LoadData5: ")
+    // console.log(response.data)
+    // return response.data
+  }
   function openModal() {
     setIsOpen(true)
   }
@@ -169,12 +197,41 @@ function TaskBoard(props) {
   function closeModal() {
     setIsOpen(false)
   }
+  function openModal2() {
+    setIsOpen2(true)
+  }
+  function afterOpenModal2() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = "#f00"
+  }
+
+  function closeModal2() {
+    setIsOpen2(false)
+  }
   let subtitle
 
   function manageApplicationButtonFunction(item) {
     console.log(item.Task_state)
     // setGroupname()
-    openModal()
+    var x = item.Task_state
+    var y = ""
+    if (x == "open") {
+      y = isPermitOpen
+    } else if (x == "toDo") {
+      y = isPermitToDo
+    } else if (x == "doing") {
+      y = isPermitDoing
+    } else if (x == "done") {
+      y = isPermitDone
+    } else if (x == "close") {
+      y = isPermitCreate
+    }
+    if (y == true) {
+      openModal()
+    } else {
+      openModal2()
+    }
+
     settaskId(item.Task_id)
     settaskName(item.Task_name)
     settaskDescription(item.Task_description)
@@ -236,9 +293,12 @@ function TaskBoard(props) {
     } else {
       newState = item.Task_state
     }
+    var initialState = item.Task_state
     console.log("NewState: ")
     console.log(newState)
-    const response = await Axios.post("http://localhost:8080/updateTask2", { taskid, newState })
+    var movement = "shiftRight"
+    var userName = sessionStorage.getItem("username")
+    const response = await Axios.post("http://localhost:8080/updateTask2", { taskid, initialState, newState, movement, userName, taskNotes })
     // if (response.data.updated === 1) {
     // console.log("22222222")
     console.log("Update Task Result:")
@@ -280,9 +340,12 @@ function TaskBoard(props) {
     } else {
       newState = item.Task_state
     }
+    var initialState = item.Task_state
     console.log("NewState: ")
     console.log(newState)
-    const response = await Axios.post("http://localhost:8080/updateTask2", { taskid, newState })
+    var movement = "shiftLeft"
+    var userName = sessionStorage.getItem("username")
+    const response = await Axios.post("http://localhost:8080/updateTask2", { taskid, initialState, newState, movement, userName, taskNotes })
     // if (response.data.updated === 1) {
     // console.log("22222222")
     console.log("Update Task Result:")
@@ -305,7 +368,9 @@ function TaskBoard(props) {
     // console.log(appPermitCreate)
     // e.preventDefault()
     // appAcronym = "Test"
-    const response = await Axios.post("http://localhost:8080/updateTask", { taskId, taskName, taskDescription, newtaskDescription, taskNotes, newtaskNotes, taskState, taskPlan, userName })
+    // setDefaultPlan(options)
+    // settaskPlan(item.Task_plan)
+    const response = await Axios.post("http://localhost:8080/updateTask", { taskId, taskName, taskDescription, newtaskDescription, taskNotes, newtaskNotes, taskState, taskPlan, newTaskPlan, userName })
     // if (response.data.updated === 1) {
     console.log("22222222")
     if (response.data.message == "Task Updated") {
@@ -322,13 +387,50 @@ function TaskBoard(props) {
   //   // setnewtaskDescription(x)
   // }
 
-  async function authUser(username, token) {
-    const response = await Axios.post("http://localhost:8080/authUser", { username, token })
-    setLoggedIn(response.data.login)
-    setisAdmin(response.data.isAdmin)
-    console.log("printing is login and is admin")
-    console.log(response.data.login)
-    console.log(response.data.isAdmin)
+  // async function authUser(username, token) {
+  //   const response = await Axios.post("http://localhost:8080/authUser", { username, token })
+  //   setLoggedIn(response.data.login)
+  //   setisAdmin(response.data.isAdmin)
+  //   console.log("printing is login and is admin")
+  //   console.log(response.data.login)
+  //   console.log(response.data.isAdmin)
+  // }
+  async function authUser(username, token, result) {
+    // Api call to authenticate and check group user
+    try {
+      // const response1 = await Axios.post("http://localhost:8080/displayApplicationsDetails2", { appAcronym })
+      // var data5 = response1.data
+      // console.log(data5)
+      const response = await Axios.post("http://localhost:8080/authUser", { username, token, result })
+
+      setLoggedIn(response.data.login)
+      setisAdmin(response.data.isAdmin)
+      setUsername(response.data.username)
+
+      setisPermitOpen(response.data.isOpen)
+      setisPermitTodo(response.data.isToDo)
+      setisPermitDoing(response.data.isDoing)
+      setisPermitDone(response.data.isDone)
+      setisPermitCreate(response.data.isCreate)
+      setisPl(response.data.isPl)
+      setisPm(response.data.isPm)
+
+      if (response.data.login !== true) {
+        console.log(response.data.login)
+        console.log("NOT LOGGED IN")
+        sessionStorage.clear()
+        navigate("/")
+      }
+      // if (response.data.isAdmin !== true) {
+      //   console.log(response.data.isAdmin)
+      //   console.log("NOT ADMIN")
+      //   sessionStorage.clear()
+      //   navigate("/")
+      // }
+    } catch (e) {
+      console.log(e)
+      navigate("/")
+    }
   }
 
   const setSomethingNew = event => {
@@ -339,9 +441,12 @@ function TaskBoard(props) {
     const username = sessionStorage.getItem("username")
     const token = sessionStorage.getItem("token")
     loadData() // ,
+
+    loadData5(username, token)
     loadData2()
     loadData3()
     loadData4()
+    // loadData5()
     // authUser(username, token)
   }, [props.change])
 
@@ -363,7 +468,7 @@ function TaskBoard(props) {
             <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
               Task Name:
             </label>
-            <input value={taskName} onChange={e => settaskName(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <input value={taskName} disabled onChange={e => settaskName(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
             <br />
           </p>
           <p style={{ display: "table-row" }}>
@@ -389,40 +494,41 @@ function TaskBoard(props) {
               Task Plans:
             </label>
             {/* <input value={taskPlan} onChange={e => settaskPlan(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-            <Select components={animatedComponents} defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => settaskPlan(e.value)} />
+            {/* <Select components={animatedComponents} defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => settaskPlan(e.value)} /> */}
+            <Select components={animatedComponents} defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => setNewTaskPlan(e.value)} />
           </p>
           <p style={{ display: "table-row" }}>
             <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
               Task State:
             </label>
-            <input value={taskState} onChange={e => settaskState(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <input value={taskState} disabled onChange={e => settaskState(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
             <br />
           </p>
           <p style={{ display: "table-row" }}>
             <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
               Task Creator:
             </label>
-            <input value={taskCreator} onChange={e => settaskCreator(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <input value={taskCreator} disabled onChange={e => settaskCreator(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
             <br />
           </p>
           <p style={{ display: "table-row" }}>
             <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
               Task Owner:
             </label>
-            <input value={taskOwner} onChange={e => settaskOwner(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <input value={taskOwner} disabled onChange={e => settaskOwner(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
             <br />
           </p>
           <p style={{ display: "table-row" }}>
             <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
               Task Create Date:
             </label>
-            <input value={taskCreateDate.split("T")[0]} onChange={e => settaskCreateDate(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <input value={taskCreateDate.split("T")[0]} disabled onChange={e => settaskCreateDate(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
             <br />
           </p>
           <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
             Note Audit:
           </label>
-          <TextareaAutosize maxRows={4} aria-label="maximum height" placeholder="Maximum 4 rows" defaultValue={taskNotes} style={{ width: 345 }} />
+          <TextareaAutosize maxRows={4} disabled aria-label="maximum height" placeholder="Maximum 4 rows" defaultValue={taskNotes} style={{ width: 345 }} />
           <div>
             <br></br>
           </div>
@@ -431,6 +537,90 @@ function TaskBoard(props) {
         </form>
         <div>{/* <br></br> */}</div>
         <button onClick={closeModal}>close</button>
+      </Modal>
+      <Modal name="ReactModal__Overlay" isOpen={modalIsOpen2} onAfterOpen={afterOpenModal2} onRequestClose={closeModal2} style={customStyles} contentLabel="Example Modal">
+        <h2 ref={_subtitle => (subtitle = _subtitle)}>View Only</h2>
+        {/* <div>Enter New Group Name!!!</div> */}
+        {/* <button onClick={closeModal}>close</button> */}
+        <form>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task Id:
+            </label>
+            <input value={taskId} onChange={e => settaskId(e.target.value)} disabled style={{ display: "table-cell", marginLeft: "5px" }} />
+            <br />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task Name:
+            </label>
+            <input value={taskName} disabled onChange={e => settaskName(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <br />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Description:
+            </label>
+            {/* <input value={taskDescription} onChange={e => setDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+            <input defaultValue={taskDescription} disabled onChange={setSomethingNew} style={{ display: "table-cell", marginLeft: "5px" }} />
+            {/* <input value={taskDescription} onChange={e => setnewtaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+            <br />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task Notes:
+            </label>
+            {/* <input value={taskNotes} onChange={e => settaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+            <input onChange={e => setnewtaskNotes(e.target.value)} disabled style={{ display: "table-cell", marginLeft: "5px" }} />
+
+            <br />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task Plans:
+            </label>
+            {/* <input value={taskPlan} onChange={e => settaskPlan(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+            {/* <Select components={animatedComponents} defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => settaskPlan(e.value)} /> */}
+            <Select components={animatedComponents} disabled defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => setNewTaskPlan(e.value)} />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task State:
+            </label>
+            <input value={taskState} disabled onChange={e => settaskState(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <br />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task Creator:
+            </label>
+            <input value={taskCreator} disabled onChange={e => settaskCreator(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <br />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task Owner:
+            </label>
+            <input value={taskOwner} disabled onChange={e => settaskOwner(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <br />
+          </p>
+          <p style={{ display: "table-row" }}>
+            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+              Task Create Date:
+            </label>
+            <input value={taskCreateDate.split("T")[0]} disabled onChange={e => settaskCreateDate(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <br />
+          </p>
+          <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+            Note Audit:
+          </label>
+          <TextareaAutosize maxRows={4} disabled aria-label="maximum height" placeholder="Maximum 4 rows" defaultValue={taskNotes} style={{ width: 345 }} />
+          <div>
+            <br></br>
+          </div>
+        </form>
+        <div>{/* <br></br> */}</div>
+        <button onClick={closeModal2}>close</button>
       </Modal>
 
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
@@ -488,8 +678,8 @@ function TaskBoard(props) {
                         <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
                       </div>
                     ) : null} */}
-                      <Button onClick={() => shiftLeftFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
-                      <Button onClick={() => shiftRightFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
+                      {/* {isAdmin ? <Button onClick={() => shiftLeftFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button> : null} */}
+                      {isPermitOpen ? <Button onClick={() => shiftRightFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button> : null}
                       <Button onClick={() => manageApplicationButtonFunction(item)} variant="contained" size="small" startIcon={<ReadMoreIcon />}></Button>
                     </CardActions>
                   </Card>
@@ -529,8 +719,8 @@ function TaskBoard(props) {
                         <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
                       </div>
                     ) : null} */}
-                    <Button onClick={() => shiftLeftFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
-                    <Button onClick={() => shiftRightFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
+                    {/* <Button onClick={() => shiftLeftFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button> */}
+                    {isPermitToDo ? <Button onClick={() => shiftRightFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button> : null}
                     <Button onClick={() => manageApplicationButtonFunction(item)} variant="contained" size="small" startIcon={<ReadMoreIcon />}></Button>
                   </CardActions>
                 </Card>
@@ -568,8 +758,8 @@ function TaskBoard(props) {
                         <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
                       </div>
                     ) : null} */}
-                    <Button onClick={() => shiftLeftFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
-                    <Button onClick={() => shiftRightFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
+                    {isPermitDoing ? <Button onClick={() => shiftLeftFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button> : null}
+                    {isPermitDoing ? <Button onClick={() => shiftRightFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button> : null}
                     <Button onClick={() => manageApplicationButtonFunction(item)} variant="contained" size="small" startIcon={<ReadMoreIcon />}></Button>
                   </CardActions>
                 </Card>
@@ -607,8 +797,8 @@ function TaskBoard(props) {
                         <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
                       </div>
                     ) : null} */}
-                    <Button onClick={() => shiftLeftFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
-                    <Button onClick={() => shiftRightFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
+                    {isPermitDone ? <Button onClick={() => shiftLeftFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button> : null}
+                    {isPermitDone ? <Button onClick={() => shiftRightFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button> : null}
                     <Button onClick={() => manageApplicationButtonFunction(item)} variant="contained" size="small" startIcon={<ReadMoreIcon />}></Button>
                   </CardActions>
                 </Card>
@@ -646,8 +836,8 @@ function TaskBoard(props) {
                         <Button style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
                       </div>
                     ) : null} */}
-                    <Button onClick={() => shiftLeftFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
-                    <Button onClick={() => shiftRightFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button>
+                    {/* <Button onClick={() => shiftLeftFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowLeftIcon size="small" />}></Button>
+                    <Button onClick={() => shiftRightFunction(item)} style={{ minWidth: "0", padding: "1px" }} color="primary" size="small" startIcon={<KeyboardDoubleArrowRightIcon size="small" />}></Button> */}
                     <Button onClick={() => manageApplicationButtonFunction(item)} variant="contained" size="small" startIcon={<ReadMoreIcon />}></Button>
                   </CardActions>
                 </Card>
