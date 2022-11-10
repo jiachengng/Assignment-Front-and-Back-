@@ -108,14 +108,26 @@ function CreatePlan(props) {
       props.onSubmit(response)
       setCount(count + 1)
       closeModal()
+      setSuccess("success")
+      setPlanName("")
+      setPlanStartDate("")
+      setPlanEndDate("")
 
       // setMessage(response.data.message)
       // setOpen(true)
+    } else if (response.data.message == "Plan Name cannot be empty") {
+      console.log("Error")
+      setSuccess("error")
+    } else if (response.data.message == "Start Date cannot be empty") {
+      console.log("Error")
+      setSuccess("error")
+    } else if (response.data.message == "End Date cannot be empty") {
+      console.log("Error")
+      setSuccess("error")
     } else {
       console.log("Error")
       setSuccess("error")
     }
-    closeModal()
     setMessage(response.data.message)
     setOpen(true)
   }

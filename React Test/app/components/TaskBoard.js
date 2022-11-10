@@ -481,180 +481,183 @@ function TaskBoard(props) {
 
   return (
     <div>
+      Application: {sessionStorage.getItem("appAcronym")}
       <Modal name="ReactModal__Overlay" isOpen={modalIsOpen} onAfterOpen={afterOpenModal} onRequestClose={closeModal} style={customStyles} contentLabel="Example Modal">
-        <h2 ref={_subtitle => (subtitle = _subtitle)}>View / Edit</h2>
-        {/* <div>Enter New Group Name!!!</div> */}
-        {/* <button onClick={closeModal}>close</button> */}
-        <form>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task Id:
-            </label>
-            <input value={taskId} onChange={e => settaskId(e.target.value)} disabled style={{ display: "table-cell", marginLeft: "5px" }} />
-            <br />
-          </p>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task Name:
-            </label>
-            <input value={taskName} disabled onChange={e => settaskName(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
-            <br />
-          </p>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Description:
-            </label>
-            {/* <input value={taskDescription} onChange={e => setDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-            <TextareaAutosize maxRows={4} aria-label="maximum height" placeholder="Maximum 4 rows" defaultValue={taskDescription} onChange={setSomethingNew} style={{ display: "table-cell", width: "100%", display: "table-cell", marginLeft: "5px" }} />
-            {/* <input defaultValue={taskDescription} onChange={setSomethingNew} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-            {/* <input value={taskDescription} onChange={e => setnewtaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-            <br />
-          </p>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task Notes:
-            </label>
-            {/* <input value={taskNotes} onChange={e => settaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-            {/* <input onChange={e => setnewtaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-            <TextareaAutosize maxRows={2} aria-label="maximum height" placeholder="Add notes in any" onChange={e => setnewtaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+        <div style={{ width: "1000px", margin: "auto" }}>
+          <h2 ref={_subtitle => (subtitle = _subtitle)}>View / Edit</h2>
+          {/* <div>Enter New Group Name!!!</div> */}
+          {/* <button onClick={closeModal}>close</button> */}
+          <form>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task Id:
+              </label>
+              <input value={taskId} onChange={e => settaskId(e.target.value)} disabled style={{ display: "table-cell", marginLeft: "5px" }} />
+              <br />
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task Name:
+              </label>
+              <input value={taskName} disabled onChange={e => settaskName(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <br />
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Description:
+              </label>
+              {/* <input value={taskDescription} onChange={e => setDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+              <TextareaAutosize maxRows={4} aria-label="maximum height" placeholder="Maximum 4 rows" defaultValue={taskDescription} onChange={setSomethingNew} style={{ display: "table-cell", width: "400%", display: "table-cell", marginLeft: "5px" }} />
+              {/* <input defaultValue={taskDescription} onChange={setSomethingNew} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+              {/* <input value={taskDescription} onChange={e => setnewtaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task Notes:
+              </label>
+              {/* <input value={taskNotes} onChange={e => settaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+              {/* <input onChange={e => setnewtaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+              <TextareaAutosize maxRows={2} aria-label="maximum height" placeholder="Add notes in any" onChange={e => setnewtaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
 
-            <br />
-          </p>
-          <p style={{ display: "table-row" }}>
+              <br />
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task Plans:
+              </label>
+              {/* <input value={taskPlan} onChange={e => settaskPlan(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+              {/* <Select components={animatedComponents} defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => settaskPlan(e.value)} /> */}
+              {console.log("FrontEnd Check adjust plan: " + adjustPlan)}
+              {adjustPlan == true ? <Select components={animatedComponents} defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => setNewTaskPlan(e.value)} /> : <Select components={animatedComponents} defaultValue={defaultPlan} isDisabled={true} options={data3} autosize={true} onChange={e => setNewTaskPlan(e.value)} />}
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task State:
+              </label>
+              <input value={taskState} disabled onChange={e => settaskState(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <br />
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task Creator:
+              </label>
+              <input value={taskCreator} disabled onChange={e => settaskCreator(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <br />
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task Owner:
+              </label>
+              <input value={taskOwner} disabled onChange={e => settaskOwner(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <br />
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task Create Date:
+              </label>
+              <input value={taskCreateDate.split("T")[0]} disabled onChange={e => settaskCreateDate(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <br />
+            </p>
             <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task Plans:
+              Note Audit:
             </label>
-            {/* <input value={taskPlan} onChange={e => settaskPlan(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-            {/* <Select components={animatedComponents} defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => settaskPlan(e.value)} /> */}
-            {console.log("FrontEnd Check adjust plan: " + adjustPlan)}
-            {adjustPlan == true ? <Select components={animatedComponents} defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => setNewTaskPlan(e.value)} /> : <Select components={animatedComponents} defaultValue={defaultPlan} isDisabled={true} options={data3} autosize={true} onChange={e => setNewTaskPlan(e.value)} />}
-          </p>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task State:
-            </label>
-            <input value={taskState} disabled onChange={e => settaskState(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
-            <br />
-          </p>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task Creator:
-            </label>
-            <input value={taskCreator} disabled onChange={e => settaskCreator(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
-            <br />
-          </p>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task Owner:
-            </label>
-            <input value={taskOwner} disabled onChange={e => settaskOwner(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
-            <br />
-          </p>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task Create Date:
-            </label>
-            <input value={taskCreateDate.split("T")[0]} disabled onChange={e => settaskCreateDate(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
-            <br />
-          </p>
-          <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-            Note Audit:
-          </label>
-          <TextareaAutosize maxRows={4} disabled aria-label="maximum height" placeholder="Maximum 4 rows" defaultValue={taskNotes} style={{ width: 345 }} />
-          <div>
-            <br></br>
-          </div>
+            <TextareaAutosize maxRows={4} disabled aria-label="maximum height" placeholder="Maximum 4 rows" defaultValue={taskNotes} style={{ width: 345 }} />
+            <div>
+              <br></br>
+            </div>
 
-          <button onClick={submit}>Save</button>
-        </form>
-        <div>{/* <br></br> */}</div>
-        <button onClick={closeModal}>close</button>
+            <button onClick={submit}>Save</button>
+          </form>
+          <div>{/* <br></br> */}</div>
+          <button onClick={closeModal}>close</button>
+        </div>
       </Modal>
       <Modal name="ReactModal__Overlay" isOpen={modalIsOpen2} onAfterOpen={afterOpenModal2} onRequestClose={closeModal2} style={customStyles} contentLabel="Example Modal">
-        <h2 ref={_subtitle => (subtitle = _subtitle)}>View Only</h2>
-        {/* <div>Enter New Group Name!!!</div> */}
-        {/* <button onClick={closeModal}>close</button> */}
-        <form>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task Id:
-            </label>
-            <input value={taskId} onChange={e => settaskId(e.target.value)} disabled style={{ display: "table-cell", marginLeft: "5px" }} />
-            <br />
-          </p>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task Name:
-            </label>
-            <input value={taskName} disabled onChange={e => settaskName(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
-            <br />
-          </p>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Description:
-            </label>
-            {/* <input value={taskDescription} onChange={e => setDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-            <input defaultValue={taskDescription} disabled onChange={setSomethingNew} style={{ display: "table-cell", marginLeft: "5px" }} />
-            {/* <input value={taskDescription} onChange={e => setnewtaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-            <br />
-          </p>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task Notes:
-            </label>
-            {/* <input value={taskNotes} onChange={e => settaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-            <input onChange={e => setnewtaskNotes(e.target.value)} disabled style={{ display: "table-cell", marginLeft: "5px" }} />
+        <div style={{ width: "1000px", margin: "auto" }}>
+          <h2 ref={_subtitle => (subtitle = _subtitle)}>View Only</h2>
+          {/* <div>Enter New Group Name!!!</div> */}
+          {/* <button onClick={closeModal}>close</button> */}
+          <form>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task Id:
+              </label>
+              <input value={taskId} onChange={e => settaskId(e.target.value)} disabled style={{ display: "table-cell", marginLeft: "5px" }} />
+              <br />
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task Name:
+              </label>
+              <input value={taskName} disabled onChange={e => settaskName(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <br />
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Description:
+              </label>
+              {/* <input value={taskDescription} onChange={e => setDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+              {/* <input defaultValue={taskDescription} disabled onChange={setSomethingNew} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+              <TextareaAutosize disabled maxRows={4} aria-label="maximum height" placeholder="Maximum 4 rows" defaultValue={taskDescription} onChange={setSomethingNew} style={{ display: "table-cell", width: "400%", display: "table-cell", marginLeft: "5px" }} />
+              {/* <input value={taskDescription} onChange={e => setnewtaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task Notes:
+              </label>
+              {/* <input value={taskNotes} onChange={e => settaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+              <input onChange={e => setnewtaskNotes(e.target.value)} disabled style={{ display: "table-cell", marginLeft: "5px" }} />
 
-            <br />
-          </p>
-          <p style={{ display: "table-row" }}>
+              <br />
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task Plans:
+              </label>
+              {/* <input value={taskPlan} onChange={e => settaskPlan(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+              {/* <Select components={animatedComponents} defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => settaskPlan(e.value)} /> */}
+              <Select components={animatedComponents} disabled defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => setNewTaskPlan(e.value)} />
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task State:
+              </label>
+              <input value={taskState} disabled onChange={e => settaskState(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <br />
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task Creator:
+              </label>
+              <input value={taskCreator} disabled onChange={e => settaskCreator(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <br />
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task Owner:
+              </label>
+              <input value={taskOwner} disabled onChange={e => settaskOwner(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <br />
+            </p>
+            <p style={{ display: "table-row" }}>
+              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                Task Create Date:
+              </label>
+              <input value={taskCreateDate.split("T")[0]} disabled onChange={e => settaskCreateDate(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+              <br />
+            </p>
             <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task Plans:
+              Note Audit:
             </label>
-            {/* <input value={taskPlan} onChange={e => settaskPlan(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-            {/* <Select components={animatedComponents} defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => settaskPlan(e.value)} /> */}
-            <Select components={animatedComponents} disabled defaultValue={defaultPlan} options={data3} autosize={true} onChange={e => setNewTaskPlan(e.value)} />
-          </p>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task State:
-            </label>
-            <input value={taskState} disabled onChange={e => settaskState(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
-            <br />
-          </p>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task Creator:
-            </label>
-            <input value={taskCreator} disabled onChange={e => settaskCreator(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
-            <br />
-          </p>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task Owner:
-            </label>
-            <input value={taskOwner} disabled onChange={e => settaskOwner(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
-            <br />
-          </p>
-          <p style={{ display: "table-row" }}>
-            <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-              Task Create Date:
-            </label>
-            <input value={taskCreateDate.split("T")[0]} disabled onChange={e => settaskCreateDate(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
-            <br />
-          </p>
-          <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-            Note Audit:
-          </label>
-          <TextareaAutosize maxRows={4} disabled aria-label="maximum height" placeholder="Maximum 4 rows" defaultValue={taskNotes} style={{ width: 345 }} />
-          <div>
-            <br></br>
-          </div>
-        </form>
-        <div>{/* <br></br> */}</div>
-        <button onClick={closeModal2}>close</button>
+            <TextareaAutosize maxRows={4} disabled aria-label="maximum height" placeholder="Maximum 4 rows" defaultValue={taskNotes} style={{ width: 345 }} />
+            <div>
+              <br></br>
+            </div>
+          </form>
+          <div>{/* <br></br> */}</div>
+          <button onClick={closeModal2}>close</button>
+        </div>
       </Modal>
-
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity={success} sx={{ width: "100%" }}>
           {message}

@@ -126,6 +126,12 @@ exports.createApplication = async (req, res, result) => {
       message: "Application Name cannot be empty"
     })
   }
+  if (/\s/.test(req.body.appAcronym)) {
+    return res.status(200).send({
+      success: false,
+      message: "Application Name cannot have space(s)"
+    })
+  }
   // if (req.body.appDescription == "" || req.body.appDescription == null) {
   //   return res.status(200).send({
   //     success: false,
@@ -336,6 +342,24 @@ exports.createPlan = async (req, res, result) => {
   if (!req.body) {
     res.status(400).send({
       message: "Content can not be empty!"
+    })
+  }
+  if (req.body.planName == "" || req.body.planName == null) {
+    return res.status(200).send({
+      success: false,
+      message: "Plan Name cannot be empty"
+    })
+  }
+  if (req.body.planStartDate == "" || req.body.planStartDate == null) {
+    return res.status(200).send({
+      success: false,
+      message: "Start Date cannot be empty"
+    })
+  }
+  if (req.body.planEndDate == "" || req.body.planEndDate == null) {
+    return res.status(200).send({
+      success: false,
+      message: "End Date cannot be empty"
     })
   }
   var newPlan = {
@@ -562,7 +586,9 @@ exports.updateTask2 = async (req, res) => {
 
   if (newState == "done") {
     var emailList = await getEmail("pl")
-    var msg = `Project lead, \n \n [TaskID]${req.body.taskid} from [Application]${req.body.taskAppAcronym} has been promoted from DOING to DONE state \n\n System generated message, do not reply`
+    // var msg = `Project lead, \n \n [TaskID]${req.body.taskid} from [Application]${req.body.taskAppAcronym} has been promoted from DOING to DONE state by [User]${req.body.userName} \n\n System generated message, do not reply`
+    var msg = `Project lead, \n \n [TaskID]${req.body.taskid} has been promoted from DOING to DONE state by [User]${req.body.userName} \n\n\n\nSystem generated message, do not reply`
+
     sendEmail(emailList[0], msg)
     sendEmail(emailList[1], msg)
   }

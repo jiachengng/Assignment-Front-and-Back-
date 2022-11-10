@@ -136,6 +136,9 @@ function CreateApplication(props) {
     } else if (response.data.message == "Please select all permission") {
       setSuccess("error")
       // console.log(response.data)
+    } else if (response.data.message == "Application Name cannot have space(s)") {
+      setSuccess("error")
+      // console.log(response.data)
     } else {
       console.log("Error")
       setSuccess("error")
