@@ -55,42 +55,6 @@ exports.displayApplicationsDetails2 = async (req, res) => {
 }
 
 exports.updateApplication = async (req, res) => {
-  if (req.body.appAcronym == "" || req.body.appAcronym == null) {
-    return res.status(200).send({
-      success: false,
-      message: "Application Name cannot be empty"
-    })
-  }
-  if (req.body.appDescription == "" || req.body.appDescription == null) {
-    return res.status(200).send({
-      success: false,
-      message: "Description cannot be empty"
-    })
-  }
-  if (req.body.appStartDate == "" || req.body.appStartDate == null) {
-    return res.status(200).send({
-      success: false,
-      message: "Start Date cannot be empty"
-    })
-  }
-  if (req.body.appEndDate == "" || req.body.appEndDate == null) {
-    return res.status(200).send({
-      success: false,
-      message: "End Date cannot be empty"
-    })
-  }
-  if (req.body.appPermitOpen == "" || req.body.appPermitOpen == null || req.body.appPermitToDoList == "" || req.body.appPermitToDoList == null || req.body.appPermitDone == "" || req.body.appPermitDone == null || req.body.appPermitCreate == "" || req.body.appPermitCreate == null) {
-    return res.status(200).send({
-      success: false,
-      message: "Please select all permission"
-    })
-  }
-  if (req.body.appRnumber == "" || req.body.appRnumber == null) {
-    return res.status(200).send({
-      success: false,
-      message: "R number cannot be empty"
-    })
-  }
   console.log("Running: " + "updateApplication")
   console.log("App name: " + req.body.appAcronym)
   console.log("Description: " + req.body.appDescription)
@@ -102,8 +66,40 @@ exports.updateApplication = async (req, res) => {
   console.log("Permit Doing: " + req.body.appPermitDoing)
   console.log("Permit Done: " + req.body.appPermitDone)
   console.log("Permit Create: " + req.body.appPermitCreate)
-
-  sql.query(`UPDATE application SET App_Description = '${req.body.appDescription}',App_startDate = '${req.body.appStartDate}',App_endDate = '${req.body.appEndDate}',App_permit_Open = '${req.body.appPermitOpen}',App_permit_toDoList = '${req.body.appPermitToDoList}',App_permit_Doing = '${req.body.appPermitDoing}',App_permit_Done = '${req.body.appPermitDone}',App_permit_Create = '${req.body.appPermitCreate}'  WHERE App_Acronym = '${req.body.appAcronym}'`, async (err, result) => {
+  if (req.body.appAcronym == "" || req.body.appAcronym == null) {
+    return res.status(200).send({
+      success: false,
+      message: "Application Name cannot be empty"
+    })
+  } else if (req.body.appRnumber == "" || req.body.appRnumber == null) {
+    return res.status(200).send({
+      success: false,
+      message: "R Number cannot be empty"
+    })
+  } else if (req.body.appStartDate == "" || req.body.appStartDate == null) {
+    console.log("RYANNNNNNNNNN NO START DATE LA")
+    return res.status(200).send({
+      success: false,
+      message: "Start Date cannot be empty"
+    })
+  } else if (req.body.appEndDate == "" || req.body.appEndDate == null) {
+    return res.status(200).send({
+      success: false,
+      message: "End Date cannot be empty"
+    })
+  } else if (req.body.appPermitOpen == "" || req.body.appPermitOpen == null || req.body.appPermitToDoList == "" || req.body.appPermitToDoList == null || req.body.appPermitDone == "" || req.body.appPermitDone == null || req.body.appPermitCreate == "" || req.body.appPermitCreate == null) {
+    return res.status(200).send({
+      success: false,
+      message: "Please select all permission"
+    })
+  } else if (req.body.appRnumber % 1 != 0) {
+    return res.status(200).send({
+      success: false,
+      message: "R number must be whole number"
+    })
+  }
+  statement = `UPDATE application SET App_Description = ?,App_startDate = ?,App_endDate = ?,App_permit_Open = ?,App_permit_toDoList = ?,App_permit_Doing = ?,App_permit_Done = ?,App_permit_Create = ?,App_Rnumber = ?  WHERE App_Acronym = ?`
+  sql.query(statement, [req.body.appDescription, req.body.appStartDate, req.body.appEndDate, req.body.appPermitOpen, req.body.appPermitToDoList, req.body.appPermitDoing, req.body.appPermitDone, req.body.appPermitCreate, req.body.appRnumber, req.body.appAcronym], async (err, result) => {
     if (err) {
       console.log("error: ", err)
       res.send("Unable to get results")
@@ -130,12 +126,12 @@ exports.createApplication = async (req, res, result) => {
       message: "Application Name cannot be empty"
     })
   }
-  if (req.body.appDescription == "" || req.body.appDescription == null) {
-    return res.status(200).send({
-      success: false,
-      message: "Description cannot be empty"
-    })
-  }
+  // if (req.body.appDescription == "" || req.body.appDescription == null) {
+  //   return res.status(200).send({
+  //     success: false,
+  //     message: "Description cannot be empty"
+  //   })
+  // }
   if (req.body.appStartDate == "" || req.body.appStartDate == null) {
     return res.status(200).send({
       success: false,
@@ -213,12 +209,18 @@ exports.createTask = async (req, res, result) => {
       message: "Task Name cannot be empty"
     })
   }
-  if (req.body.taskDescription == "" || req.body.taskDescription == null) {
-    return res.status(200).send({
-      success: false,
-      message: "Description cannot be empty"
-    })
-  }
+  // if (req.body.taskDescription == "" || req.body.taskDescription == null) {
+  //   return res.status(200).send({
+  //     success: false,
+  //     message: "Description cannot be empty"
+  //   })
+  // }
+  // if (req.body.taskDescription == "" || req.body.taskDescription == null) {
+  //   return res.status(200).send({
+  //     success: false,
+  //     message: "Description cannot be empty"
+  //   })
+  // }
   var m = new Date()
   var dateString = m.getUTCFullYear() + "/" + ("0" + (m.getUTCMonth() + 1)).slice(-2) + "/" + ("0" + m.getUTCDate()).slice(-2) + " " + ("0" + m.getUTCHours()).slice(-2) + ":" + ("0" + m.getUTCMinutes()).slice(-2) + ":" + ("0" + m.getUTCSeconds()).slice(-2)
 
@@ -448,9 +450,9 @@ exports.updateTask = async (req, res) => {
   var taskNote = req.body.taskNotes
   if (req.body.newtaskNotes != "") {
     console.log("New Note1 : " + req.body.newtaskNotes)
-    var newNote = "[" + req.body.userName + "] added a new note: " + req.body.newtaskNotes + " [" + dateString + "]"
+    var newNote = "[" + req.body.userName + "] added a new note: \n`" + req.body.newtaskNotes + "`\nat State:" + req.body.taskState + "\n [" + dateString + "]"
     console.log("New Note2 : " + newNote)
-    taskNote = newNote + "\n" + taskNote
+    taskNote = newNote + "\n\n" + taskNote
   }
   //description
   var taskToUpdate = ""
@@ -459,7 +461,7 @@ exports.updateTask = async (req, res) => {
   if (newTaskDescription != initialDescription) {
     if (newTaskDescription != "") {
       taskToUpdate = newTaskDescription
-      var newNote = "[" + req.body.userName + "] editted the description from: " + initialDescription + " to " + newTaskDescription + " [" + dateString + "]"
+      var newNote = "[" + req.body.userName + "] editted the description from: \n`" + initialDescription + "` to `" + newTaskDescription + "`\nat State:" + req.body.taskState + "\n[" + dateString + "]"
       taskNote = newNote + "\n" + taskNote
     } else {
       taskToUpdate = initialDescription
@@ -482,7 +484,7 @@ exports.updateTask = async (req, res) => {
   if (newPlan != initialPlan) {
     if (newPlan != "") {
       planToUpdate = newPlan
-      var newNote = "[" + req.body.userName + "] editted the plan from: " + initialPlan + " to " + newPlan + " [" + dateString + "]"
+      var newNote = "[" + req.body.userName + "] editted the plan from: \n`" + initialPlan + "` to `" + newPlan + "`\nat State:" + req.body.taskState + " \n[" + dateString + "]"
       taskNote = newNote + "\n" + taskNote
     } else {
       planToUpdate = initialPlan
@@ -496,11 +498,11 @@ exports.updateTask = async (req, res) => {
   // console.log("Initial Description: " + initialDescription)
   // console.log("New Description: " + newTaskDescription)
   // console.log("Final Description: " + taskToUpdate)
-
+  statement = `UPDATE task SET Task_description = ?,Task_notes = ?, Task_plan = ?, Task_owner = ? WHERE Task_id = ?`
   // if (req.body.taskNotes == "") {
   // sql.query(`UPDATE task SET Task_name = '${req.body.taskName}',Task_description = '${req.body.taskDescription}',Task_notes = '${taskNote}}',Task_state = '${req.body.taskState}', Task_plan = '${req.body.taskPlan}' WHERE Task_id = '${req.body.taskId}'`, async (err, result) => {
   // sql.query(`UPDATE task SET Task_name = '${req.body.taskName}',Task_description = '${taskToUpdate}',Task_notes = '${taskNote}',Task_state = '${req.body.taskState}', Task_plan = '${req.body.taskPlan}' WHERE Task_id = '${req.body.taskId}'`, async (err, result) => {
-  sql.query(`UPDATE task SET Task_description = '${taskToUpdate}',Task_notes = '${taskNote}', Task_plan = '${planToUpdate}' WHERE Task_id = '${req.body.taskId}'`, async (err, result) => {
+  sql.query(statement, [taskToUpdate, taskNote, planToUpdate, req.body.userName, req.body.taskId], async (err, result) => {
     if (err) {
       console.log("1111111111111")
       console.log("error: ", err)
@@ -539,7 +541,7 @@ exports.updateTask2 = async (req, res) => {
     } else {
       newState = req.body.initialState
     }
-    var newNote = "[" + req.body.userName + "] promoted the task from: " + req.body.initialState + " to " + newState + " [" + dateString + "]"
+    var newNote = "[" + req.body.userName + "] promoted the task from: \n`" + req.body.initialState + "` to `" + newState + "`\n[" + dateString + "]"
   }
   if (req.body.movement == "shiftLeft") {
     if (req.body.initialState == "toDo") {
@@ -553,7 +555,7 @@ exports.updateTask2 = async (req, res) => {
     } else {
       newState = req.body.initialState
     }
-    var newNote = "[" + req.body.userName + "] demoted the task from: " + req.body.initialState + " to " + newState + " [" + dateString + "]"
+    var newNote = "[" + req.body.userName + "] demoted the task from: \n`" + req.body.initialState + "` to `" + newState + "`\n[" + dateString + "]"
   }
   // var newNote = "[" + req.body.userName + "] demoted the task from: " + req.body.initialState + " to " + newState + " [" + dateString + "]"
   taskNote = newNote + "\n" + taskNote
@@ -564,8 +566,8 @@ exports.updateTask2 = async (req, res) => {
     sendEmail(emailList[0], msg)
     sendEmail(emailList[1], msg)
   }
-
-  sql.query(`UPDATE task SET Task_state = '${newState}', Task_notes='${taskNote}' WHERE Task_id = '${req.body.taskid}'`, async (err, result) => {
+  statement = `UPDATE task SET Task_state = ?, Task_notes=?, Task_owner=? WHERE Task_id = ?`
+  sql.query(statement, [newState, taskNote, req.body.userName, req.body.taskid], async (err, result) => {
     if (err) {
       console.log("1111111111111")
       console.log("error: ", err)

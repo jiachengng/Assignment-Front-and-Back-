@@ -98,6 +98,8 @@ function CreateApplication(props) {
   async function submit(e) {
     e.preventDefault()
     const response = await Axios.post("http://localhost:8080/createApplication", { appAcronym, appDescription, appRnumber, appStartDate, appEndDate, appPermitOpen, appPermitToDoList, appPermitDoing, appPermitDone, appPermitCreate })
+    console.log("Create App")
+    console.log(response)
     // if (response.data) {
     if (response.data.message == "Application Created") {
       setSuccess("success")
@@ -206,7 +208,7 @@ function CreateApplication(props) {
           <label style={{ marginLeft: "15px" }} htmlFor="username-register" className="text-muted mb-1">
             R.no:
           </label>
-          <input style={{ marginLeft: "10px" }} type="number" min="0" step="1" onChange={e => setAppRnumber(e.target.value)} required />
+          <input style={{ marginLeft: "10px" }} type="number" min="0" step="1" onChange={e => setAppRnumber(e.target.value)} required onKeyDown={evt => (evt.key === "." && evt.preventDefault()) || (evt.key === "e" && evt.preventDefault()) || (evt.key === "-" && evt.preventDefault())} />
           <br />
           <label htmlFor="username-register" className="text-muted mb-1">
             Description:

@@ -72,7 +72,13 @@ function CreateTask(props) {
 
   const customStyles = {
     content: {
-      bottom: "auto"
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      "z-index": 1000
     }
   }
 
@@ -121,13 +127,22 @@ function CreateTask(props) {
       props.onSubmit(count)
       setCount(count + 1)
       closeModal()
+      setTaskName("")
+      setTaskDescription("")
+      setTaskNotes("")
+
       // setMessage(response.data.message)
       // setOpen(true)
+    } else if (response.data.message == "Task Name cannot be empty") {
+      setSuccess("error")
+      // console.log(response.data)
+    } else if (response.data.message == "Description cannot be empty") {
+      setSuccess("error")
+      // console.log(response.data)
     } else {
       console.log("Error")
       setSuccess("error")
     }
-    closeModal()
     setMessage(response.data.message)
     setOpen(true)
   }
@@ -169,58 +184,58 @@ function CreateTask(props) {
       </Snackbar>
       <form>
         <Modal name="ReactModal__Overlay" isOpen={modalIsOpen} onAfterOpen={afterOpenModal} onRequestClose={closeModal} style={customStyles} contentLabel="Example Modal">
-          <h2 ref={_subtitle => (subtitle = _subtitle)}>Create Task</h2>
-          {/* <div>Enter New Group Name!!!</div> */}
-          {/* <button onClick={closeModal}>close</button> */}
-          <form>
-            <p style={{ display: "table-row" }}>
-              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-                Application Name:
-              </label>
-              <input value={sessionStorage.getItem("appAcronym")} disabled style={{ display: "table-cell", marginLeft: "5px" }} />
-              <br />
-            </p>
-            <p style={{ display: "table-row" }}>
-              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-                Task Name:
-              </label>
-              <input onChange={e => setTaskName(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
-              <br />
-            </p>
-            <p style={{ display: "table-row" }}>
-              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-                Description:
-              </label>
-              <TextareaAutosize maxRows={4} aria-label="maximum height" onChange={e => setTaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
-              {/* <input onChange={e => setTaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-              <br />
-            </p>
-            <p style={{ display: "table-row" }}>
-              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-                Plan:
-              </label>
-              {/* <input onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-              <Select components={animatedComponents} options={data} autosize={true} onChange={e => setPlan(e.value)} />
-              <br />
-            </p>
-            <p style={{ display: "table-row" }}>
-              <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
-                Task Notes:
-              </label>
-              <TextareaAutosize maxRows={4} aria-label="maximum height" onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
-              {/* <input onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-              <br />
-            </p>
+          <div style={{ width: "1000px", margin: "auto" }}>
+            <h2 ref={_subtitle => (subtitle = _subtitle)}>Create Task</h2>
+            {/* <div>Enter New Group Name!!!</div> */}
+            {/* <button onClick={closeModal}>close</button> */}
+            <form>
+              <p style={{ display: "table-row" }}>
+                <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                  Application Name:
+                </label>
+                <input value={sessionStorage.getItem("appAcronym")} disabled style={{ display: "table-cell", marginLeft: "5px" }} />
+                <br />
+              </p>
+              <p style={{ display: "table-row" }}>
+                <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                  Task Name:
+                </label>
+                <input onChange={e => setTaskName(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+                <br />
+              </p>
+              <p style={{ display: "table-row" }}>
+                <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                  Description:
+                </label>
+                <TextareaAutosize maxRows={4} aria-label="maximum height" onChange={e => setTaskDescription(e.target.value)} style={{ width: "400%", display: "table-cell", marginLeft: "5px" }} />
+                {/* <input onChange={e => setTaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+              </p>
+              <p style={{ display: "table-row" }}>
+                <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                  Plan:
+                </label>
+                {/* <input onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+                <Select components={animatedComponents} options={data} autosize={true} onChange={e => setPlan(e.value)} />
+              </p>
+              <p style={{ display: "table-row" }}>
+                <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
+                  Task Notes:
+                </label>
+                <TextareaAutosize maxRows={4} aria-label="maximum height" onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+                {/* <input onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
+                <br />
+              </p>
+              <div>
+                <br></br>
+              </div>
+
+              <button onClick={submit}>Save</button>
+            </form>
             <div>
               <br></br>
             </div>
-
-            <button onClick={submit}>Save</button>
-          </form>
-          <div>
-            <br></br>
+            <button onClick={closeModal}>close</button>
           </div>
-          <button onClick={closeModal}>close</button>
         </Modal>
       </form>
       <button className="py-1 mt-2 btn btn-lg btn-warning btn-block" onClick={openModal}>

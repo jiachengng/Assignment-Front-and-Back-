@@ -20,6 +20,7 @@ import makeAnimated from "react-select/animated"
 import Snackbar from "@mui/material/Snackbar"
 import MuiAlert from "@mui/material/Alert"
 import Modal from "react-modal"
+import TextareaAutosize from "@mui/base/TextareaAutosize"
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -202,17 +203,25 @@ function DisplayApplication(props) {
   }
 
   async function submit(e) {
+    e.preventDefault()
     console.log("====####################====")
     console.log("YOOOOOOOOOOOOOOOOOOOOOOOOOOOOSS")
     // console.log(appPermitCreate)
     // e.preventDefault()
     // appAcronym = "Test"
     const response = await Axios.post("http://localhost:8080/updateApplication", { appAcronym, appDescription, appRnumber, appStartDate, appEndDate, appPermitOpen, appPermitToDoList, appPermitDoing, appPermitDone, appPermitCreate })
+
+    console.log("Display App")
+    console.log(response)
+
     // if (response.data.updated === 1) {
     if (response.data.message == "Application Updated") {
       console.log("Application table successfully Updated")
-      setMessage(response.data.message)
-      setOpen(true)
+      props.onSubmit(response)
+      setSuccess("success")
+      closeModal()
+      // setMessage(response.data.message)
+      // setOpen(true)
     } else if (response.data.message == "Application Name cannot be empty") {
       setSuccess("error")
       // console.log(response.data)
@@ -226,6 +235,9 @@ function DisplayApplication(props) {
       setSuccess("error")
       // console.log(response.data)
     } else if (response.data.message == "Please select all permission") {
+      setSuccess("error")
+      // console.log(response.data)
+    } else if (response.data.message == "R Number cannot be empty") {
       setSuccess("error")
       // console.log(response.data)
     } else {
@@ -326,26 +338,29 @@ function DisplayApplication(props) {
           <label htmlFor="username-register" className="text-muted mb-1">
             App Name:
           </label>
-          <input style={{ marginLeft: "10px" }} value={appAcronym} onChange={e => setAppAcronym(e.target.value)} />
-          <label style={{ marginLeft: "15px" }} htmlFor="username-register" className="text-muted mb-1">
-            Description:
-          </label>
-          <input style={{ marginLeft: "10px" }} value={appDescription} onChange={e => setAppDescription(e.target.value)} />
+          <input style={{ marginLeft: "10px" }} disabled value={appAcronym} onChange={e => setAppAcronym(e.target.value)} />
+
           <label style={{ marginLeft: "15px" }} htmlFor="username-register" className="text-muted mb-1">
             R.no:
           </label>
-          <input style={{ marginLeft: "10px" }} type="number" min="0" step="1" value={appRnumber} onChange={e => setAppRnumber(e.target.value)} />
+          <input disabled style={{ marginLeft: "10px" }} type="number" min="0" step="1" value={appRnumber} onChange={e => setAppRnumber(e.target.value)} onKeyDown={evt => (evt.key === "." && evt.preventDefault()) || (evt.key === "e" && evt.preventDefault()) || (evt.key === "-" && evt.preventDefault())} />
+          <div>{/* <br></br> */}</div>
+          <label htmlFor="username-register" className="text-muted mb-1">
+            Description:
+          </label>
+          {/* <input style={{ marginLeft: "10px" }} value={appDescription} onChange={e => setAppDescription(e.target.value)} /> */}
+          <TextareaAutosize maxRows={4} aria-label="maximum height" defaultValue={appDescription} onChange={e => setAppDescription(e.target.value)} style={{ width: "100%" }} />
           <div>
             <br></br>
           </div>
           <label htmlFor="username-register" className="text-muted mb-1">
             Start:
           </label>
-          <input value={appStartDate.split("T")[0]} onChange={e => setAppStartDate(e.target.value)} />
+          <input disabled value={appStartDate.split("T")[0]} onChange={e => setAppStartDate(e.target.value)} />
           <label htmlFor="username-register" className="text-muted mb-1">
             End:
           </label>
-          <input value={appEndDate.split("T")[0]} onChange={e => setAppEndDate(e.target.value)} />
+          <input disabled value={appEndDate.split("T")[0]} onChange={e => setAppEndDate(e.target.value)} />
           <br></br>
           <label htmlFor="username-register" className="text-muted mb-1">
             Permit Open:

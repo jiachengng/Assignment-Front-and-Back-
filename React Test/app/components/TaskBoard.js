@@ -262,7 +262,11 @@ function TaskBoard(props) {
     }
 
     if (y == true) {
-      openModal()
+      if (x != "close") {
+        openModal()
+      } else {
+        openModal2()
+      }
     } else {
       openModal2()
     }
@@ -382,6 +386,7 @@ function TaskBoard(props) {
   }
 
   async function submit(e) {
+    e.preventDefault()
     console.log("====####################====")
     console.log("YOOOOOOOOOOOOOOOOOOOOOOOOOOOOSS")
     console.log("!!!!!!!!!!!!!!!!!!!!!!!!")
@@ -395,9 +400,12 @@ function TaskBoard(props) {
     // if (response.data.updated === 1) {
     console.log("22222222")
     if (response.data.message == "Task Updated") {
-      console.log("Task table successfully Updated")
+      console.log("response.data.message: " + response.data.message)
       setMessage(response.data.message)
       setOpen(true)
+      setSuccess("success")
+      closeModal()
+      props.onSubmit(response)
     } else {
       console.log("Error")
     }
@@ -497,7 +505,7 @@ function TaskBoard(props) {
               Description:
             </label>
             {/* <input value={taskDescription} onChange={e => setDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-            <TextareaAutosize maxRows={4} aria-label="maximum height" placeholder="Maximum 4 rows" defaultValue={taskDescription} onChange={setSomethingNew} style={{ display: "table-cell", marginLeft: "5px" }} />
+            <TextareaAutosize maxRows={4} aria-label="maximum height" placeholder="Maximum 4 rows" defaultValue={taskDescription} onChange={setSomethingNew} style={{ display: "table-cell", width: "100%", display: "table-cell", marginLeft: "5px" }} />
             {/* <input defaultValue={taskDescription} onChange={setSomethingNew} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
             {/* <input value={taskDescription} onChange={e => setnewtaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
             <br />
