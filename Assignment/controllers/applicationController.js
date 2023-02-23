@@ -587,10 +587,13 @@ exports.updateTask2 = async (req, res) => {
   if (newState == "done") {
     var emailList = await getEmail("pl")
     // var msg = `Project lead, \n \n [TaskID]${req.body.taskid} from [Application]${req.body.taskAppAcronym} has been promoted from DOING to DONE state by [User]${req.body.userName} \n\n System generated message, do not reply`
-    var msg = `Project lead, \n \n [TaskID]${req.body.taskid} has been promoted from DOING to DONE state by [User]${req.body.userName} \n\n\n\nSystem generated message, do not reply`
-
-    sendEmail(emailList[0], msg)
-    sendEmail(emailList[1], msg)
+    // var msg = `Project lead, \n \n [TaskID]${req.body.taskid}, [TaskName]${req.body.taskName} has been promoted from DOING to DONE state by [User]${req.body.userName} \n\n\n\nSystem generated message, do not reply`
+    var msg = `Project lead, \n \n [TaskID]${req.body.taskid}, has been promoted from DOING to DONE state by [User]${req.body.userName} \n\n\n\nSystem generated message, do not reply`
+    for (i = 0; i < emailList.length; i++) {
+      sendEmail(emailList[i], msg)
+    }
+    // sendEmail(emailList[0], msg)
+    // sendEmail(emailList[1], msg)
   }
   statement = `UPDATE task SET Task_state = ?, Task_notes=?, Task_owner=? WHERE Task_id = ?`
   sql.query(statement, [newState, taskNote, req.body.userName, req.body.taskid], async (err, result) => {

@@ -126,10 +126,23 @@ function CreateTask(props) {
       console.log(response.data)
       props.onSubmit(count)
       setCount(count + 1)
-      closeModal()
+
+      document.getElementById("create-task-name").value = ""
+      document.getElementById("create-task-description").value = ""
+      document.getElementById("create-task-plan").value = ""
+      document.getElementById("create-task-notes").value = ""
+
       setTaskName("")
       setTaskDescription("")
       setTaskNotes("")
+      setPlan("")
+      // { value: "", label: "" }
+      setSuccess("success")
+
+      // closeModal()
+      // e.target.reset()
+
+      // openModal()
 
       // setMessage(response.data.message)
       // setOpen(true)
@@ -200,14 +213,14 @@ function CreateTask(props) {
                 <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
                   Task Name:
                 </label>
-                <input onChange={e => setTaskName(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+                <input id="create-task-name" onChange={e => setTaskName(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
                 <br />
               </p>
               <p style={{ display: "table-row" }}>
                 <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
                   Description:
                 </label>
-                <TextareaAutosize maxRows={4} aria-label="maximum height" onChange={e => setTaskDescription(e.target.value)} style={{ width: "400%", display: "table-cell", marginLeft: "5px" }} />
+                <TextareaAutosize id="create-task-description" maxRows={4} aria-label="maximum height" onChange={e => setTaskDescription(e.target.value)} style={{ width: "400%", display: "table-cell", marginLeft: "5px" }} />
                 {/* <input onChange={e => setTaskDescription(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
               </p>
               <p style={{ display: "table-row" }}>
@@ -215,13 +228,13 @@ function CreateTask(props) {
                   Plan:
                 </label>
                 {/* <input onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
-                <Select components={animatedComponents} options={data} autosize={true} onChange={e => setPlan(e.value)} />
+                <Select id="create-task-plan" value={plan.value} components={animatedComponents} options={data} autosize={true} onChange={e => setPlan(e.value)} />
               </p>
               <p style={{ display: "table-row" }}>
                 <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
                   Task Notes:
                 </label>
-                <TextareaAutosize maxRows={4} aria-label="maximum height" onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
+                <TextareaAutosize id="create-task-notes" maxRows={4} aria-label="maximum height" onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} />
                 {/* <input onChange={e => setTaskNotes(e.target.value)} style={{ display: "table-cell", marginLeft: "5px" }} /> */}
                 <br />
               </p>

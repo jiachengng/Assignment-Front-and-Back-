@@ -321,7 +321,7 @@ function TaskBoard(props) {
     // console.log(newState)
     var movement = "shiftRight"
     var userName = sessionStorage.getItem("username")
-    const response = await Axios.post("http://localhost:8080/updateTask2", { taskid, initialState, movement, userName, taskNotes, taskAppAcronym })
+    const response = await Axios.post("http://localhost:8080/updateTask2", { taskid, initialState, movement, userName, taskNotes, taskAppAcronym, taskName })
     // const response = await Axios.post("http://localhost:8080/updateTask2", { taskid, initialState, newState, movement, userName, taskNotes })
     // if (response.data.updated === 1) {
     // console.log("22222222")
@@ -329,6 +329,7 @@ function TaskBoard(props) {
     console.log(response)
     if (response.data.message == "Task Updated") {
       console.log("Task table successfully Updated")
+      setSuccess("success")
       setMessage(response.data.message)
       setOpen(true)
       props.onSubmit(response)
@@ -561,7 +562,7 @@ function TaskBoard(props) {
             <label htmlFor="username-register" className="text-muted mb-1" style={{ display: "table-cell", textAlign: "right" }}>
               Note Audit:
             </label>
-            <TextareaAutosize maxRows={4} disabled aria-label="maximum height" placeholder="Maximum 4 rows" defaultValue={taskNotes} style={{ width: 345 }} />
+            <TextareaAutosize maxRows={4} disabled aria-label="maximum height" placeholder="Maximum 4 rows" defaultValue={taskNotes} style={{ display: "table-cell", width: "100%", display: "table-cell", marginLeft: "5px" }} />
             <div>
               <br></br>
             </div>
